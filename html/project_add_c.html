@@ -1,0 +1,162 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+	<div class="w10 tx-c dspn" style="height:143px; padding-top:15px;" id="null">		
+		<div class="w25 area_auto">
+			<img src="../image/icon/null.png" class="w10" />
+		</div>
+		<div class="h10e"></div>
+		<div class="ftz09 t-999">暂无项目</div>
+	</div>
+	<div id="project" class="c-wh ovd mart05"></div>
+	
+	<script id="project_temp" type="text/html">
+	<div class="">
+<!--		<label class="ftz085 sl w333333"><input class="aui-radio" type="radio" name="belltype" checked="" value="1"> 轮钟</label>
+		<label class="ftz085 sl w333333"><input class="aui-radio" type="radio" name="belltype" value="2"> 点钟</label>-->
+		<input class="aui-radio" type="hidden" name="belltype" value="3">
+	</div>
+	<div class="sl side_tab">
+		<%for(var i=0; i<data.length;i++){%>
+			<%if(i==0) {%>
+			<div class="side_item aui-active" data-id="<%=data[i].id%>" onclick="swicthTab(this)"><%=data[i].category_name%><span id="dotnum_<%=i+1%>" class="dot dspn"></span></div>
+			<%}else{%>
+			<div class="side_item" data-id="<%=data[i].id%>" onclick="swicthTab(this)"><%=data[i].category_name%><span id="dotnum_<%=i+1%>" class="dot dspn"></span></div>
+			<%}%>
+		<%}%>
+	</div>
+	<div class="side_content">
+		<%for(var i=0; i<data.length;i++){%>
+		<div class="swicth_item<%if(i!=0){%> dspn<%}%>">
+		<ul class="aui-list aui-list-in">
+			<%for(var j=0; j<data[i].project_list.length;j++){
+				var cover;
+				if(is_define(data[i].project_list[j].cover)) {
+					cover = data[i].project_list[j].cover;
+				} else {
+					cover = '../image/icon/zl_gra.png';
+				};
+				var imgurl="../image/icon/cancle.png";
+			%>
+			<li class="aui-list-item pdt075 pdb075" data-id="<%=data[i].project_list[j].id%>" rel="no" onclick="change_select(this,<%=data[i].project_list[j].item_price%>,<%=data[i].project_list[j].id%>)">
+				<div class="aui-list-item-inner">
+					<div class="itemimg"><img src="<%=cover%>" class="w80" /></div>
+					<div class="aui-list-middle">
+						<div class="aui-list-row t-333"><%=data[i].project_list[j].item_name%></div>
+						<div class="aui-list-row t-fd363b ftz085">¥<%=data[i].project_list[j].item_price%>/<%=data[i].project_list[j].item_duration%>分钟</div>
+						<div class="aui-list-row t-939393 ftz085">编号：<%=data[i].project_list[j].item_sn%></div>
+					</div>
+					<div class="aui-list-right"><img src="<%=imgurl%>" class="select_user w15e" /></div>
+				</div>
+			</li>
+			<%}%>
+      	</ul>
+      	</div>
+      	<%}%>
+	</div>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript">
+	var project = {};
+	var projects = new Array();
+	var number=0;
+	var total=0;
+	apiready = function(){
+		get_project();
+	};
+	
+	
+	function get_project() {
+    	show_doing();
+	    request("m=Masseur&a=get_project",{values:{}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		if(datas.data.length>0) {
+					$('#project').html(bt('project_temp',datas));
+				} else {
+					$('#project').html(no_data);
+				}
+				api.parseTapmode();		
+	    	} else {
+	    		$("#null").removeClass("dspn");
+	    	}
+   		})
+	}
+	
+	function change_select(obj,price,pid){
+		var img=$(obj).find(".select_user").attr("src");
+		if(img=="../image/icon/cancle.png"){
+			$(obj).attr("rel","yes");
+			$(obj).find(".select_user").attr("src","../image/icon/select.png");
+			number = number + 1;
+			total = total + price;
+			var types = $("input[name=belltype]").val();
+			if(!is_define(types)) {
+				$toast('请选择轮钟类型！');
+				return false;
+			}
+			project={p_id:pid,p_types:1,types:types,number:1};
+			projects.push(project);
+		}else{
+			$(obj).attr("rel","no");
+			$(obj).find(".select_user").attr("src","../image/icon/cancle.png");
+			number = number - 1;
+			total = total - price;
+			for(var i=0;i<projects.length;i++){
+	  			if(pid==projects[i].p_id){
+	  				projects.splice(i,1);
+	  			}
+	  		}
+			
+		}
+		ue_script('project_add','get_total('+total+')');
+		$('.side_tab .aui-active .dot').removeClass('dspn').text(number);
+		
+		var itemNum=parseInt($('.side_tab .side_item .dot').text());
+		if(itemNum>0) {
+			$('.side_tab .side_item .dot').removeClass('dspn');
+		}
+	}
+	
+	function submit() {
+		if(projects.length==0) {
+			$toast('请选择项目！');
+			return false;
+		}
+		show_doing();
+	    request("m=Masseur&a=post_additional_orders",{values:{order_id:api.pageParam.order_id,p_orders:projects}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		ue_script_f("order_deal","order_deal_c","get_deal('"+api.pageParam.order_id+"')");
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    		setTimeout(function(){ue_script("project_add","close_w()");},1000);
+	    	} else {
+	    		$toast(data.msg)
+	    	}
+   		})
+	}
+	
+	function swicthTab(obj) {
+		var index=$(obj).index();
+	    $(obj).addClass("aui-active").siblings().removeClass("aui-active");
+	    $(".side_content").find(".swicth_item").addClass('dspn').eq(index).removeClass('dspn');
+	}
+</script>
+</html>

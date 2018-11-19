@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+	<div class="w10 tx-c dspn" style="height:143px; padding-top:15px;" id="null">		
+		<div class="w25 area_auto">
+			<img src="../image/icon/null.png" class="w10" />
+		</div>
+		<div class="h10e"></div>
+		<div class="ftz09 t-999">暂无包间</div>
+	</div>
+	<div id="room" class="c-wh ovd"></div>
+	
+	<script id="room_temp" type="text/html">
+	<div class="ovd ubb umh25 pdl05 pdr03"><span class="aui-label-title ftz085">可用包间</span></div>
+	<div class="roombox ovd pdt10">
+		<%for(var i=0; i<data.length;i++){%>
+			<div class="w5 sl">
+				<div class="room_item w8 marb10 area_auto<%if(data[i].category_name=='豪华包间'){%> haohua<%}else{%> putong<%}%>" rel="no" tapmode="" onclick="room_select(this,'<%=i%>','<%=data[i].id%>')">
+					<img src="../image/1.png" class="w15e selectimg pstna abst02 absr02"/>
+					<div class="pdt075 pdb02 ftz10 tx-c cateName"><%=data[i].category_name%></div>
+					<div class="tx-c roomName"><%=data[i].room_name%></div>
+					<div class="flex_between ftz07 pdl08 pdr08 pdt05 totag">
+						<div>房间总数:<%=data[i].bed_total_count%></div>
+						<div>床位剩余:<%=data[i].bed_yu_count%></div>
+					</div>
+				</div>
+			</div>
+		<%}%>
+	</div>
+	
+	<div class="w10 h05e c-f7f7f7"></div>
+	<div class="ovd c-wh bedbox dspn">
+		<div class="ovd ubb umh25 pdl05 pdr03"><span class="aui-label-title ftz085">可用床位</span></div>
+		<%for(var i=0; i<data.length;i++){%>
+		<div class="bed_list pdt10">
+			<%for(var j=0; j<data[i].bed_list.length;j++){%>
+				<div class="w25 sl">
+					<div class="bed_item w9 marb10 area_auto<%if(data[i].category_name=='豪华包间'){%> haohua<%}else{%> putong<%}%>" rel="no" tapmode="" onclick="bed_select(this,'<%=data[i].bed_list[j].id%>')">
+						<img src="../image/1.png" id="roomselect<%=i%>" class="w12e selectimg pstna abst02 absr02"/>
+						<div class="tx-c bed_number"><%=data[i].bed_list[j].bed_no%></div>
+					</div>
+				</div>
+			<%}%>
+		</div>
+		<%}%>
+	</div>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript">
+	var room_id;
+	var bed_id;
+	apiready = function(){
+		get_rooms();
+	};
+	
+	
+	function get_rooms() {
+    	show_doing();
+	    request("m=Masseur&a=room_bed",{values:{}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0) {
+	    		if(datas.data.length>0) {
+					$('#room').html(bt('room_temp',datas));
+				} else {
+					$('#room').html(no_data);
+				}
+				api.parseTapmode();		
+	    	} else {
+	    		$("#null").removeClass("dspn");
+	    	}
+   		})
+	}
+	
+	function room_select(obj,index,id) {
+		room_id = id;
+		var room_str = $(obj).find('.selectimg').attr('src');
+		if(room_str=='../image/1.png'){
+			$(obj).attr('rel','yes');
+			$(obj).find('.selectimg').attr('src','../image/2.png');
+			$(obj).parent().siblings().find('.room_item').attr('rel','no');
+			$(obj).parent().siblings().find('.selectimg').attr('src','../image/1.png');
+			$('.bedbox').removeClass('dspn');
+			$('.bedbox .bed_list').addClass('dspn').eq(index).removeClass('dspn');
+		}
+	}
+	
+	function bed_select(obj,id) {
+		bed_id = id;
+		var bed_str = $(obj).find('.selectimg').attr('src');
+		if(bed_str=='../image/1.png'){
+			$(obj).attr('rel','yes');
+			$(obj).find('.selectimg').attr('src','../image/2.png');
+			$(obj).parent().siblings().find('.bed_item').attr('rel','no');
+			$(obj).parent().siblings().find('.selectimg').attr('src','../image/1.png');
+		}
+	}
+	
+	function submit() {
+		if(!is_define(room_id)) {
+			$toast('请选择包间！');
+			return false;
+		}
+		if(!is_define(bed_id)) {
+			$toast('请选择床位！');
+			return false;
+		}
+		show_doing();
+	    request("m=Masseur&a=replace_room",{values:{order_id:api.pageParam.order_id,room_id:room_id,bed_id:bed_id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		ue_script_f('order_deal','order_deal_c','get_deal()');
+	    		setTimeout(function(){ue_script("room_edit","close_w()");},1000);
+	    		open_w('order_deal','../user/order_deal.html',{order_id:api.pageParam.order_id});
+	    	}
+   		})
+	}
+</script>
+</html>

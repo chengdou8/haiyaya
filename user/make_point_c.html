@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+</head>
+<body>
+	<div class="w10 tx-c dspn" style="height:143px; padding-top:15px;" id="null">		
+		<div class="w25 area_auto">
+			<img src="../image/icon/null.png" class="w10" />
+		</div>
+		<div class="h10e"></div>
+		<div class="ftz09 t-999">暂无预约</div>
+	</div>
+    <div class="c-wh" id="make_point_list"></div>
+    <script id="makepoint_temp" type="text/html">
+		<%for(var i=0; i<data.length;i++){
+			var projectImg;
+			if(is_define(data[i].cover)) {
+				projectImg=data[i].cover
+			} else {
+				projectImg='../image/icon/null.png'
+			}
+		%>
+		<div class="ovd pdl05 pdr05 ubb ub-e4e4e4" tapmode="c-f7f7f7" data-id="<%=data[i].id%>">
+			<div class="ovd ubb umh2 ub-e4e4e4 pdt03 pdb03 ftz095">
+				<img src="../image/icon/icon_openorder.png" class="fl w10e pdt015 mart03" />
+				<span class="fl pdl05 t-666">前台开单</span>
+				<span class="pdl07 marl05 ubl ub-e4e4e4 t-999 ftz085"><%=data[i].reservation_time%></span>
+				<span class="fr t-666"><%=data[i].room_name%></span>
+			</div>
+			<div class="ovd ubb umh2 ub-e4e4e4 pdt03 pdb03 ftz095">
+				<span class="fl pdr05 t-333"><%=data[i].name%></span>
+				<span class="pdl07 marl05 ubl ub-e4e4e4 t-666 ftz085"><%=data[i].phone%></span>
+				<span class="fr ftz08 t-939393">男生人数：<%=data[i].male_num%> | 女生人数：<%=data[i].female_num%></span>
+			</div>
+			<div class="ovd pdt05 pdb05">
+				<div class="fl avatar"><img src="<%=projectImg%>" class="w10" /></div>
+				<div class="umh3 fl pdl08 ftz10"><%=data[i].project_name%></div>
+				<div class="umh3 fr ftz08 t-939393 pdt04">¥<%=data[i].order_money%>/预约健康师：<%=data[i].masseur_sn%></div>
+			</div>
+		</div>
+		<%}%>
+	</script>
+	
+	<input type="hidden" id="page" value="1"/>
+	<input type="hidden" id="datapage" value="1"/>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		get_orderList('first');
+		push_down_motive(function(){
+			get_orderList('first');
+		});
+		push_up(function(){
+			get_orderList('next');
+		});
+	};
+	
+	function get_orderList(type) {
+		if(type=='first'){
+		   $("#page").val('1');  
+		}
+		if(type=='next'){
+		   var page = $("#page").val();
+		   page = parseInt(page) + 1;
+		   $api.val($api.byId("page"), page);
+		   var datapage = $("#datapage").val();
+		   if(0==datapage){
+		   	   push_up_over();
+		   	   return false;
+		   }
+		}
+    	show_doing();
+	    request("m=Appointment&a=index",{values:{pagecur:$('#page').val(),pagesize:10}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		var cur_num = datas.data.length;
+	    		if(type=='first') {
+					if(cur_num>0) {
+						$('#make_point_list').html(bt('makepoint_temp',datas));
+					} else {
+						$('#make_point_list').html(no_data);
+					}
+					
+					if(cur_num<10) {
+						$('#make_point_list').append('<div class="w10 tx-c umh3 t-999 ftz095 c-f7f7f7">'+datas.count+'个预约</div>');
+					}
+				} else {
+					if(cur_num>0) {
+						$('#make_point_list').append(bt('makepoint_temp',datas));
+					}
+				}
+				Echo.init({offset: 0,throttle:0});
+				api.parseTapmode();
+				push_down_over();			
+				push_up_over();
+	    	} else {
+		    	$("#null").removeClass("dspn");
+	    	}
+   		})
+	}
+</script>
+</html>

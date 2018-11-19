@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+	<div class="w10 tx-c dspn" style="height:143px; padding-top:15px;" id="null">		
+		<div class="w25 area_auto">
+			<img src="../image/icon/null.png" class="w10" />
+		</div>
+		<div class="h10e"></div>
+		<div class="ftz09 t-999">暂无排钟</div>
+	</div>
+	<div id="bells" class="c-wh ovd pdb075"></div>
+	
+	<script id="bells_temp" type="text/html">
+	<%for(var i=0; i<data.length;i++){
+		var ptoject;
+		var status;
+		var room_name;
+		if(data[i].is_lock=='空') {
+			ptoject = '空闲';
+			room_name='';
+		} else {
+			ptoject = data[i].project_title;
+			room_name=data[i].room_name+'包间';
+		}
+		if(data[i].status=='早班') {
+			status = '早';
+		} else if(data[i].status=='中班') {
+			status = '中';
+		} else if(data[i].status=='晚班') {
+			status = '晚';
+		}
+	%>
+	<div class="sl w333333 pdt075">
+		<div class="w9 area_auto uc-a03 pstnr <%if(data[i].is_lock=='空'){%> free<%}else{%> working<%}%>">
+			<span class="beels_status"><%=status%></span>
+			<div class="pdt025 pdl05 pdb10">
+				<%=data[i].masseur_sn%><span class="pdl025 ftz07"><%=data[i].nick_name%></span>
+			</div>
+			
+			<div class="pdl05 pdb03 ftz08">
+				<div class="h15e"><%=room_name%></div>
+				<div class="h15e"><%=ptoject%></div>
+			</div>
+
+			<div class="flex_between ftz07 ubt">
+				<div class="tx-c pdt02 pdb02 flex1">轮次:<%=data[i].wheel_count%></div>
+				<div class="tx-c pdt02 pdb02 flex1 ubl">点钟:<%=data[i].point_count%></div>
+			</div>
+		</div>
+	</div>
+	<%}%>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		get_bells();
+		push_down_motive(function(){
+			get_bells();
+		});
+	};
+	
+	function get_bells() {
+    	show_doing();
+	    request("m=Order&a=index",{values:{}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		if(datas.data.length>0) {
+					$('#bells').html(bt('bells_temp',datas));
+				} else {
+					$('#bells').html(no_data);
+				}
+				Echo.init({offset: 0,throttle:0});
+				api.parseTapmode();
+				push_down_over();			
+	    	} else {
+	    		$("#null").removeClass("dspn");
+	    	}
+   		})
+	}
+</script>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+</head>
+<body class="c-wh">
+	<div class="box c-3dc6b6 h-195 pdt05 dspn pstnr" style="background:url(../image/b.jpg);background-size:cover" id="exits_login">
+			<div class="ovd w8 area_auto pdt10 pdb10 mart05">
+				<div class="sl w50e tx-l" id="face_img" tapmode="op9"><img id="face" src="../image/head_1.jpg" class="w40e h40e uc-a"></div>
+				<div class="sl w80e h40e t-wh">
+					<div class="w10 tx-l umh2 ftb"><span id="nickname"></span><span class="t-333 ftz08" id="experience"></span></div>
+					<div class="w10 tx-l umh2 ftb"><span id="mobile"></span></div>
+				</div>
+			</div>
+			<div class="ovd absb0 absl0 w10 pstna bgb-color" >
+                <div class="h30e w10 op7 t-wh pdt05 pdb05 ovd">
+                	<div class="sl w3 tx-c h20e">
+                		<div class="umh1"><span class="ftz08 ftb" id="shop_id">0</span></div>
+                		<div class="umh1"><span class="ftz08 ftb">所属门店</span></div>
+                	</div>
+                	<div class="w05 sl tx-c">|</div>
+                	<div class="sl w3 tx-c h20e">
+                		<div class="">
+                			<div class="umh1"><span class="ftz08 ftb" id="chain_id">0</span></div>
+                			<div class="umh1"><span class="ftz08 ftb">连锁店</span></div>
+                		</div>
+                	</div>
+                	<div class="w05 sl tx-c">|</div>
+                	<div class="sl w3 tx-c h20e" tapmode="op8">
+                		<div class="umh1"><span class="ftz08 ftb" id="number">0</span></div>
+                		<div class="umh1"><span class="ftz08 ftb">工号</span></div>
+                	</div>
+                </div>
+            </div>
+		</div>
+		<div id="no_login" class="box  h-195 pdt05 dspn pstnr " style="background:url(../image/b.png) no-repeat 100%">
+			<div class="box umh4 pdt05 pdb10 tx-c t-wh mart15" onclick="goto_login()" tapmode="">
+				<div class="ovd w8 area_auto h40e">
+					<div class="sl w50e tx-l"><img tapmode="op8" src="../image/icon/default_face.png" class="w40e uc-a"></div>
+					<div class="sl w80e umh4 t-wh ftb">登录/注册</div>
+				</div>
+			</div>
+			<div class="ovd absb0 absl0 w10 pstna bgb-color" >
+                <div class="h30e w10 op7 t-wh pdt05 pdb05 ovd">
+                	<div class="sl w3 tx-c h20e">
+                		<div class="umh1"><span class="ftz08 ftb">0</span></div>
+                		<div class="umh1"><span class="ftz08 ftb">所属门店</span></div>
+                	</div>
+                	<div class="w05 sl tx-c">|</div>
+                	<div class="sl w3 tx-c h20e">
+                		<div class="">
+                			<div class="umh1"><span class="ftz08 ftb">0</span></div>
+                			<div class="umh1"><span class="ftz08 ftb">连锁店</span></div>
+                		</div>
+                	</div>
+                	<div class="w05 sl tx-c">|</div>
+                	<div class="sl w3 tx-c h20e" tapmode="op8">
+                		<div class="umh1"><span class="ftz08 ftb">0</span></div>
+                		<div class="umh1"><span class="ftz08 ftb">工号</span></div>
+                	</div>
+                </div>
+            </div>
+		</div>
+		
+		<div class="box ovd ftz08 ubb ub-e4e4e4 ovd">
+			<div class="tx-c" >
+				<div class="sl w333333 pdt10 pdb10 item_nav pstnr" tapmode="op8">
+					<div><img src="../image/icon/js_logo.png" class="img-h img-mid inblock"  /></div>
+					<div class="mart05">分享健康师版</div>
+				</div>
+				<div class="sl w333333 pdt10 pdb10 item_nav pstnr" tapmode="op8">
+					<div><img src="../image/icon/sj_logo.png" class="img-h img-mid inblock"  /></div>
+					<div class="mart05">分享商家版</div>
+				</div>
+				<div class="sl w333333 pdt10 pdb10 item_nav pstnr" tapmode="op8" onclick="go_to_set()">
+					<div><img src="../image/icon/set.png" class="img-w img-mid inblock"  /></div>
+					<div class="mart05">设置</div>
+				</div>
+			</div>
+		</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		user_info()
+	};
+	
+	function user_info(){
+		var token = get_local('openid');
+		if(is_define(token)){
+			$("#exits_login").removeClass("dspn");
+			$("#no_login").addClass("dspn");
+			$("#nickname").text(get_local('truename'));
+			var mobile=get_local('mobile').substr(0,3)+"****"+get_local('mobile').substr(get_local('mobile').length-4,4);
+			$("#mobile").text(mobile);
+			$("#shop_id").text(get_local('shop_id'));
+			$("#chain_id").text(get_local('chain_id'));
+			$("#number").text(get_local('masseur_sn'));
+		}else{
+			$("#no_login").removeClass("dspn");
+			$("#exits_login").addClass("dspn");			
+		}
+	}
+	
+	$('#set_btn').click(function(e) {
+	    e.stopPropagation()
+	    is_login(function(){go_to_set()});
+	})
+	
+	function go_to_set(){
+		open_w('set','widget://user/set.html');
+	}
+</script>
+</html>

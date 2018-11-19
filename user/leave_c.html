@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+    <link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+</head>
+<body>
+<div class="leave_content">
+	<div class="ovd c-wh umh30 ubb pdt05 pdb08 ftz085" id="leave_type"></div>
+	<script id="leave_type_temp" type="text/html">
+	<%for(var i=0; i<data.length;i++){%>
+	<label class="sl w333333 t-666 mart05"><input class="aui-radio" type="radio" name="leave_type" value="<%=data[i].id%>" /><%=data[i].title%></label>
+	<%}%>
+	</script>
+	<ul class="aui-list aui-list-in">
+        <!--<li class="aui-list-item">
+            <div class="aui-list-item-inner">
+                <div class="aui-list-item-label t-555">全天</div>
+                <div class="aui-list-item-right">
+                    <input class="switch switch-anim" id="allday" name="allday" type="checkbox" ontouchend="is_OpenAllday()" value="">
+                </div>
+            </div>
+        </li>-->
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-label t-555 w25">开始时间</div>
+                <div class="aui-list-item-middle">
+                   <input type="text" value="" class="datatime" name="startDateTime" id="startDateTime" readonly="readonly" ontouchend="dtpicker(this)"/>
+                </div>
+            </div>
+        </li>
+        <li class="aui-list-item">
+            <div class="aui-list-item-inner aui-list-item-arrow">
+                <div class="aui-list-item-label t-555 w25">结束时间</div>
+                <div class="aui-list-item-middle">
+                    <input type="text" value="" class="datatime" name="endDateTime" id="endDateTime" readonly="readonly" ontouchend="dtpicker(this)" /> 
+                </div>
+            </div>
+        </li>
+    </ul>
+    <!--<div class="umh25 pdr10 tx-r ftz08 t-939393" id="time">共0天</div>-->
+    
+    <div class="ubb c-wh mart075 ub-e4e4e4 h100e pd10">
+		<textarea id="cont" placeholder="请输入您要添加的备注" name="content" class="w10 area_auto h60e ubnone ftz10" onkeyup="checkLength(this,200)" maxlength="200"></textarea>
+	</div>
+	<div class="umh25 pdr10 tx-r ftz08 t-939393">还可以输入<span id="textnumber">200</span>字</div>
+</div>
+</body>
+
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/mui.min.js"></script>
+<script type="text/javascript" src="../script/mui.picker.min.js"></script>
+<script type="text/javascript">
+	var leave_id;
+	apiready = function(){
+		get_type();
+		
+		leave_id = api.pageParam.id;
+		var myDate = new Date();
+		var year=myDate.getFullYear();
+		var month=myDate.getMonth()+1;
+		var date=myDate.getDate(); 
+		var tdate=date+1;
+		var h=myDate.getHours();
+		var th=h+4;
+		var m=myDate.getMinutes();
+		var now=year+'-'+p(month)+'-'+p(date)+' '+p(h)+':'+p(m);
+		var tnow=year+'-'+p(month)+'-'+p(date)+' '+p(th)+':'+p(m);
+		var allday=year+'-'+p(month)+'-'+p(date);
+		var tomorrow=year+'-'+p(month)+'-'+p(tdate);
+		if(is_define(leave_id)) {
+			get_data();
+		} else {
+//			if($('#allday').is(':checked')) {
+				$('#startDateTime').attr('data-options','{"type":"date","beginYear":2010,"endYear":2020}').attr('value',allday);
+				$('#endDateTime').attr('data-options','{"type":"date","beginYear":2010,"endYear":2020}').attr('value',allday);
+//				checktime(allday,tomorrow);
+//			} else {
+//				$('#startDateTime').attr('data-options','{"value":"'+now+'","beginYear":2010,"endYear":2020}').attr('value',now);
+//				$('#endDateTime').attr('data-options','{"value":"'+tnow+'","beginYear":2010,"endYear":2020}').attr('value',tnow);
+//				checktime(now,tnow);
+//				set_local('startTime',now)
+//				set_local('endTime',tnow)
+//			}
+		}
+	};
+	
+	function get_data() {
+    	show_doing();
+	    request("m=leave&a=edit",{values:{id:leave_id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$('#startDateTime').attr('data-options','{"value":"'+data.data.start_time+'","beginYear":2010,"endYear":2020}').attr('value',data.data.start_time);
+				$('#endDateTime').attr('data-options','{"value":"'+data.data.end_time+'","beginYear":2010,"endYear":2020}').attr('value',data.data.end_time);
+				$('#cont').val(data.data.remark);
+				checktime(data.data.start_time,data.data.end_time);
+				set_local('startTime',data.data.start_time);
+				set_local('endTime',data.data.end_time);
+				var type = $('input[name=leave_type]');
+				type.each(function() {
+					if($(this).val()==data.data.type) {
+						$(this).attr('checked','checked')
+					}
+				})
+	    	}
+   		})
+	}
+	
+	function get_type() {
+    	show_doing();
+	    request("m=leave&a=leavetype",{values:{}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		if(data.data.length>0) {
+					$('#leave_type').html(bt('leave_type_temp',data));
+				}
+	    	}
+   		})
+	}
+	
+	function dtpicker(obj) {
+        mui.init();
+        var _self = $(obj);
+        if(_self.picker) {
+          _self.picker.show(function (rs) {
+            $(obj).val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        } else {
+          var optionsJson = $(obj).attr('data-options') || '{}';
+          var options = JSON.parse(optionsJson);
+          _self.picker = new mui.DtPicker(options);
+          _self.picker.show(function (rs) {
+            $(obj).val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        }
+     };
+
+     
+    $('body').on('touchmove',function(event){event.preventDefault();});
+	
+	function submit() {
+		var type = $('input[name=leave_type]:checked').val();
+		if(!is_define(type)) {
+			$toast('请选择请假类型！');
+			return false;
+		}
+		var start_time = $('input[name=startDateTime]').val();
+		if(!is_define(start_time)) {
+			$toast('请选择开始时间！');
+			return false;
+		}
+		var end_time = $('input[name=endDateTime]').val();
+		if(!is_define(end_time)) {
+			$toast('请选择结束时间！');
+			return false;
+		}
+		var remark = $('#cont').val();
+		if(!is_define(remark)) {
+			$toast('请输入请假事由！');
+			return false;
+		}
+    	show_doing();
+    	if(is_define(leave_id)) {
+    		var data={values:{}};
+    		data.values.id = leave_id;
+    		data.values.act = 'update';
+    		data.values.type = type;
+    		data.values.start_time = start_time;
+    		data.values.end_time = end_time;
+    		data.values.remark = remark;
+    		request("m=Leave&a=edit",data, function(datas,error){
+	   			hide_doing();
+		    	if(datas.code==0){
+		    		$toast('请假修改成功！');
+		    		ue_script_f('leave_record','leave_record_c','get_leave()')
+		    		setTimeout(function(){ue_script("leave","close_w()");},1000);
+		    	}
+	   		})
+    	} else {
+    		request("m=Leave&a=applyleave",{values:{type:type,start_time:start_time,end_time:end_time,remark:remark}}, function(datas,error){
+	   			hide_doing();
+		    	if(datas.code==0){
+		    		$toast('请假申请成功！')
+		    		setTimeout(function(){ue_script("leave","close_w()");},1500);
+		    		open_w('leave_record','../user/leave_record.html');
+		    	}
+	   		})
+    	}
+	}
+	
+	function p(s) {
+	    return s < 10 ? '0' + s: s;
+	}
+	
+	function checkLength(obj,len) {
+	    var maxChars = len;
+	    if (obj.value.length <= maxChars) {
+	        var curr = maxChars - obj.value.length;
+	        $("#textnumber").eq(0).html(curr);
+	    }   
+	}
+	
+	function checktime(startTime,endTime) {
+		var date1 = new Date(startTime)
+		var date2 = new Date(endTime)
+		var s1 = date1.getTime(),s2 = date2.getTime();
+		var total = (s2 - s1)/1000;
+		var day = parseInt(total/(24*60*60));
+		var afterDay = total - day*24*60*60;
+		var hour = parseInt(afterDay/(60*60));
+		var afterHour = total - day*24*60*60 - hour*60*60;
+		var min = parseInt(afterHour/60);
+		var afterMin = total - day*24*60*60 - hour*60*60 - min*60;
+		
+		$('#time').html('共'+day+'天'+hour+'小时'+min+'分钟'+afterMin+'秒');	
+	}
+	
+	function is_OpenAllday() {
+		var startTime = $('#startDateTime').val();
+		var endTime = $('#endDateTime').val();
+		var tstartTime = get_local('startTime');
+		var tendTime = get_local('endTime');
+		var endDate = endTime.substring(0,10);
+		var startDate = startTime.substring(0,10);
+		if($('#allday').is(':checked')) {
+			$('#startDateTime').attr('data-options','{"value":"'+tstartTime+'","beginYear":2010,"endYear":2020}').attr('value',tstartTime);
+			$('#endDateTime').attr('data-options','{"value":"'+tendTime+'","beginYear":2010,"endYear":2020}').attr('value',tendTime);
+			checktime(tstartTime,tendTime)
+		} else {
+			$('#startDateTime').attr('data-options','{"type":"date","beginYear":2010,"endYear":2020}').attr('value',startTime.substring(0,10));
+			$('#endDateTime').attr('data-options','{"type":"date","beginYear":2010,"endYear":2020}');
+			addDate(endDate,1);
+		}
+	}
+	
+	 function addDate(date,days){
+       var d=new Date(date); 
+       d.setDate(d.getDate()+days); 
+       var m=d.getMonth()+1;
+       $('#endDateTime').attr('value',d.getFullYear()+'-'+m+'-'+d.getDate());
+       checktime($('#startDateTime').val().substring(0,10),d.getFullYear()+'-'+m+'-'+d.getDate());
+     }
+</script>
+</html>

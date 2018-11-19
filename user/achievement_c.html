@@ -1,0 +1,132 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+	</head>
+<body>
+	<div class="fixbox" id="fixbox">
+		<div class="c-wh ovd pdt075 pdb075 pdl10 pdr10">
+			<div class="sl w5">
+				<div class="startitem" ontouchend="dtpicker(this)">
+					<div class="t-939393 ftz07">选择开始时间</div>
+					<input type="text" value="" class="checkdate ftz10" name="startDate" id="startDate" readonly="readonly"/>
+					<img src="../image/right_gra.png" class="right_arrow">
+				</div>
+			</div>
+			<div class="sl w5">
+				<div class="enditem" ontouchend="dtpicker(this)">
+					<div class="t-939393 ftz07">选择结束时间</div>
+					<input type="text" value="" class="checkdate ftz10" name="endDate" id="endDate" readonly="readonly"/>
+					<img src="../image/right_gra.png" class="right_arrow">
+				</div>
+			</div>
+		</div>
+		<div class="ovd c-wh ubb umh25 pdl10 pdr03 mart05"><span class="sl w35 txt-inx10 ftz085 t-999">上钟时间</span><span class="sl w65 ftz085 t-999">上钟信息</span></div>
+	</div>
+	
+	<div class="c-wh" id="achievement"></div>
+	<script id="achievement_temp" type="text/html">
+	<%for(var i=0; i<info.length;i++){
+		var types;
+		if(info[i].types==1) {
+			types='轮钟'
+		} else if(info[i].types==2) {
+			types='点钟'
+		} else {
+			types='加钟'
+		}
+	%>
+	<div class="achievement_inner ovd pstnr zindex1" tapmode="c-f7f7f7" onclick="open_w('order_deal','../user/order_deal.html',{order_id:<%=info[i].order_id%>})">
+		<div class="sl w35 t-999 ftz085 tx-c">
+			<div class="pdt02 pdl15 pdr15"><%=info[i].up_time%></div>
+		</div>
+		<div class="sl w65">
+			<div class="pdl05 ovd">
+				<span class="sl ftz10"><%=info[i].title%></span>
+				<span class="marl05 sl line10 user_m uc-a02">
+	      			<span class="sex t-wh ftz07 sl uplocktype"><%=types%></span>
+	      			<span class="age sl pdt01">1</span>
+		      	</span>
+			</div>
+			<div class="pdl06 ftz085 t-666">¥<%=info[i].unit_price%>/<%=info[i].duration%>分钟</div>
+		</div>
+		<img src="../image/right_gra.png" class="right_arrow">
+	</div>
+	<%}%>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/mui.min.js"></script>
+<script type="text/javascript" src="../script/mui.picker.min.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		get_achievement();
+	};
+
+    function get_achievement() {
+    	var fixedH=$api.byId('fixbox').offsetHeight;
+		$('body').css('padding-top',fixedH);
+		$('#fixbox').css('height',fixedH).addClass('fixbox');
+		var start_time=$('#startDate').val();
+		var end_time=$('#endDate').val();
+		show_doing();
+	    request("m=Analysis&a=achievement",{values:{start_time:start_time,end_time:end_time}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		var myDate = new Date();
+				var year=myDate.getFullYear();
+	    		$('#startDate').attr('data-options','{"type":"date","beginYear":2010,"endYear":"'+year+'"}').val(data.start_time);
+				$('#endDate').attr('data-options','{"type":"date","beginYear":2010,"endYear":"'+year+'"}').val(data.end_time);
+	    		if(data.info.length>0) {
+	    			$('#achievement').html(bt('achievement_temp',data));
+	    		} else {
+	    			$('#achievement').html(no_data);
+	    		}
+	    	} else {
+		    	$toast(data.msg);
+		    	$('#achievement').html(no_data);
+		    }
+   		})
+	}
+
+	
+	function dtpicker(obj) {
+		$('body').removeAttr('style');
+		$('#fixbox').removeAttr('style').removeClass('fixbox');
+		$("body,html").scrollTop(0);
+        mui.init();
+        var _self = $(obj).find('.checkdate');
+        if(_self.picker) {
+          _self.picker.show(function (rs) {
+            _self.val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        } else {
+          var optionsJson = _self.attr('data-options') || '{}';
+          var options = JSON.parse(optionsJson);
+          _self.picker = new mui.DtPicker(options);
+          _self.picker.show(function (rs) {
+            _self.val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+            
+            get_achievement();
+          });
+        }
+     };
+</script>
+</html>

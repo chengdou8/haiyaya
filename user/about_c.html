@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	</head> 
+	<body class="c-f7f7f7">
+		<div id="news"></div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../script/init.js"></script>
+	<script type="text/javascript" src="../script/self.js"></script>
+	<script type="text/javascript" src="../script/app.js"></script>
+	<script type="text/javascript" src="../script/net.js"></script>
+	<script>
+	apiready = function(){
+		api.parseTapmode();
+		$('#vision').text('版本号'+api.appVersion)
+	};
+	</script>
+
+		<div class="box ovd">
+			<div class="pdt10 pdb10">
+				<div class="tx-c">
+					<img src="../image/icon/js_logo.png" class="w60e inblock" />
+				</div>
+				<div class="tx-c pdt05" id="vision">版本号 10.1.10</div>
+			</div>
+		</div>
+		<div class="c-wh" onclick="" tapmode="op9">
+			<div class="box pdl10 pdr10 pdt05 pdb05 ubb ubt ub-e4e4e4 c-wh ovd">
+				<div class="sl">检测更新</div>
+				<div class="sr ftz09 t-gra">已是最新版</div>
+			</div>
+		</div>
+	</script>
+</html>

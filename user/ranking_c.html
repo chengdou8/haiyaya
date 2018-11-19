@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+	</head>
+<body>
+	<div class="fixbox" id="fixbox">
+		<div class="c-wh ovd pdt075 pdb075 pdl10 pdr10">
+			<div class="sl w5">
+				<div class="startitem" ontouchend="dtpicker(this)">
+					<div class="t-939393 ftz07">选择开始时间</div>
+					<input type="text" value="" class="checkdate ftz10" name="startDate" id="startDate" readonly="readonly" />
+					<img src="../image/right_gra.png" class="right_arrow">
+				</div>
+			</div>
+			<div class="sl w5" ontouchend="dtpicker(this)">
+				<div class="enditem">
+					<div class="t-939393 ftz07">选择结束时间</div>
+					<input type="text" value="" class="checkdate ftz10" name="endDate" id="endDate" readonly="readonly" />
+					<img src="../image/right_gra.png" class="right_arrow">
+				</div>
+			</div>
+		</div>
+		
+		<div class="aui-tab mart05">
+			<div class="aui-tab-item aui-active" onclick="swicthTab(this,0)">点钟</div>
+			<div class="aui-tab-item" onclick="swicthTab(this,1)">加钟</div>
+			<div class="aui-tab-item" onclick="swicthTab(this,2)">评分</div>
+			<div class="aui-tab-item" onclick="swicthTab(this,3)">业绩</div>
+		</div>
+	</div>
+		
+	<div class="c-wh">
+		<div class="ranking_content">
+			<div class="ranking_list" id="ranking_point"></div>
+			<script id="ranking_point_temp" type="text/html">
+			<%for(var i=0; i<point.length;i++){
+				var rankimg;
+				var cover;
+				if(i==0) {
+					rankimg='../image/icon/rank1.png'
+				} else if(i==1) {
+					rankimg='../image/icon/rank2.png'
+				} else if(i==2) {
+					rankimg='../image/icon/rank3.png'
+				}
+				if(is_define(point[i].cover)) {
+					cover=point[i].cover
+				} else {
+					cover='../image/icon/logo.png'
+				}
+			%>
+			<div class="ranking_inner ovd">
+				<div class="sl pdt05 ranknum"><%if(i<3){%><img src="<%=rankimg%>" class="rank_img" /><%}else{%><%=i+1%><%}%></div>
+				<div class="sl pdl03"><img src="<%=cover%>" class="w30e h30e uc-a03" /></div>
+				<div class="sl pdl05 line30e"><%=point[i].nick_name%></div>
+				<div class="sr pdt04 t-666 ftz085 line30e"><%=point[i].point_num%>个点钟</div>
+			</div>
+			<%}%>
+			</script>
+			<div class="ranking_list dspn" id="ranking_add"></div>
+			<script id="ranking_add_temp" type="text/html">
+			<%for(var i=0; i<add.length;i++){
+				var rankimg;
+				var cover;
+				if(i==0) {
+					rankimg='../image/icon/rank1.png'
+				} else if(i==1) {
+					rankimg='../image/icon/rank2.png'
+				} else if(i==2) {
+					rankimg='../image/icon/rank3.png'
+				}
+				if(is_define(add[i].cover)) {
+					cover=add[i].cover
+				} else {
+					cover='../image/icon/logo.png'
+				}
+			%>
+			<div class="ranking_inner ovd">
+				<div class="sl pdt05 ranknum"><%if(i<3){%><img src="<%=rankimg%>" class="rank_img" /><%}else{%><%=i+1%><%}%></div>
+				<div class="sl pdl03"><img src="<%=cover%>" class="w30e h30e uc-a03" /></div>
+				<div class="sl pdl05 line30e"><%=add[i].nick_name%></div>
+				<div class="sr pdt04 t-666 ftz085 line30e"><%=add[i].add_num%>个加钟</div>
+			</div>
+			<%}%>
+			</script>
+			<div class="ranking_list dspn" id="ranking_score"></div>
+			<script id="ranking_score_temp" type="text/html">
+			<%for(var i=0; i<score.length;i++){
+				var rankimg;
+				var cover;
+				if(i==0) {
+					rankimg='../image/icon/rank1.png'
+				} else if(i==1) {
+					rankimg='../image/icon/rank2.png'
+				} else if(i==2) {
+					rankimg='../image/icon/rank3.png'
+				}
+				if(is_define(score[i].cover)) {
+					cover=score[i].cover
+				} else {
+					cover='../image/icon/logo.png'
+				}
+			%>
+			<div class="ranking_inner ovd">
+				<div class="sl pdt05 ranknum"><%if(i<3){%><img src="<%=rankimg%>" class="rank_img" /><%}else{%><%=i+1%><%}%></div>
+				<div class="sl pdl03"><img src="<%=cover%>" class="w30e h30e uc-a03" /></div>
+				<div class="sl pdl05 line30e"><%=score[i].nick_name%></div>
+				<div class="sr pdt04 t-666 ftz085 line30e">评分：<%=score[i].score%>分</div>
+			</div>
+			<%}%>
+			</script>
+			<div class="ranking_list dspn" id="ranking_amount"></div>
+			<script id="ranking_amount_temp" type="text/html">
+			<%for(var i=0; i<amount.length;i++){
+				var rankimg;
+				var cover;
+				if(i==0) {
+					rankimg='../image/icon/rank1.png'
+				} else if(i==1) {
+					rankimg='../image/icon/rank2.png'
+				} else if(i==2) {
+					rankimg='../image/icon/rank3.png'
+				}
+				if(is_define(amount[i].cover)) {
+					cover=amount[i].cover
+				} else {
+					cover='../image/icon/logo.png'
+				}
+			%>
+			<div class="ranking_inner ovd">
+				<div class="sl pdt05 ranknum"><%if(i<3){%><img src="<%=rankimg%>" class="rank_img" /><%}else{%><%=i+1%><%}%></div>
+				<div class="sl pdl03"><img src="<%=cover%>" class="w30e h30e uc-a03" /></div>
+				<div class="sl pdl05 line30e"><%=amount[i].nick_name%></div>
+				<div class="sr pdt04 t-666 ftz085 line30e">总业绩：¥<%=amount[i].pay_money%></div>
+			</div>
+			<%}%>
+			</script>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/mui.min.js"></script>
+<script type="text/javascript" src="../script/mui.picker.min.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		get_ranking();
+	};
+	
+	function get_ranking() {
+		var fixedH=$api.byId('fixbox').offsetHeight;
+		$('body').css('padding-top',fixedH);
+		$('#fixbox').css('height',fixedH).addClass('fixbox');
+		var start_time=$('#startDate').val();
+		var end_time=$('#endDate').val();
+		show_doing();
+	    request("m=Analysis&a=ranking",{values:{start_time:start_time,end_time:end_time}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		var myDate = new Date();
+				var year=myDate.getFullYear();
+	    		$('#startDate').attr('data-options','{"type":"date","beginYear":2010,"endYear":"'+year+'"}').val(data.start_time);
+				$('#endDate').attr('data-options','{"type":"date","beginYear":2010,"endYear":"'+year+'"}').val(data.end_time);
+	    		$('#ranking_point').html(bt('ranking_point_temp',data));
+	    		$('#ranking_add').html(bt('ranking_add_temp',data));
+	    		$('#ranking_score').html(bt('ranking_score_temp',data));
+	    		$('#ranking_amount').html(bt('ranking_amount_temp',data));
+	    	} else {
+		    	$toast(data.msg);
+		    }
+   		})
+	}
+
+	
+	function dtpicker(obj) {
+		$('body').removeAttr('style');
+		$('#fixbox').removeAttr('style').removeClass('fixbox');
+		$("body,html").scrollTop(0);
+        mui.init();
+        var _self = $(obj).find('.checkdate');
+        if(_self.picker) {
+          _self.picker.show(function (rs) {
+            _self.val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        } else {
+          var optionsJson = _self.attr('data-options') || '{}';
+          var options = JSON.parse(optionsJson);
+          _self.picker = new mui.DtPicker(options);
+          _self.picker.show(function (rs) {
+            _self.val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+            
+            get_ranking();
+          });
+        }
+     };
+     
+     function swicthTab(obj,index) {
+		$(obj).addClass('aui-active').siblings().removeClass("aui-active");
+		$(".ranking_content").find(".ranking_list").addClass('dspn').eq(index).removeClass('dspn');
+	}
+</script>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="format-detection" content="telephone=no"/>
+        <title>RAF</title>
+        <!-- 基础样式及JS -->
+        <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	</head> 
+<body class="model_shade">
+	<div class="qr_code"><img id="wechat" src="" /></div>
+	<span class="model_close" onclick="close_f('mask')">×</span>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		get_qrcode();
+	};
+	
+	function get_qrcode() {
+    	show_doing();
+	    request("m=Masseur&a=ewm_img",{values:{order_id:api.pageParam.order_id,masseur_id:api.pageParam.masseur_id}}, function(datas,error){
+   			hide_doing();
+   			if(datas.code==0){
+	   			$('#wechat').attr('src',datas.data)
+	    	} else {
+	    		$toast('网络出问题啦，请稍后再试！');
+	    	}  
+   		})
+    }
+</script>
+</html>

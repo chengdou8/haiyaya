@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="format-detection" content="telephone=no"/>
+        <title>RAF</title>
+        <!-- 基础样式及JS -->
+        <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+        <style>
+        	.accout{
+        		width:100%;
+        		height:50px;
+        		border:1px solid #999;
+        		border-radius:40px;
+        		padding-top:5px;
+        		box-sizing:border-box;
+        		position:relative;
+        	}
+        	.mart-p-14{
+        		margin-top:6%;
+        	}
+        	.mar-t-20{
+        		margin-top:20px;
+        	}
+        	input{
+        		width:70%;
+        		height:40px;
+        		position:absolute;
+        		top:2px;
+        		left:20%;
+        		border-style:none;
+        		font-size:14px;
+        		padding-left:25px;
+        		line-height:30px;
+        		text-align:left
+        	}
+        	.input_img{
+        		position:absolute;
+        		left:8%;
+        		width:10%;
+        		vertical-align:middle;
+        		top:22%;
+        	}
+        	.fprget_text{
+        		width:80%;
+        		margin-left:10%;
+        		padding-top:10px;
+        		font-size:15px;
+        	}
+        	.fprget_text_p{
+        		margin-top:10%;
+        	}
+        	.login{
+        		width:100%;
+        		text-align:center;
+        		border-radius:40px;
+        		background-color:#3dc6b6;
+        		color:#fff;
+        		height:50px;
+        		line-height:50px;
+        		font-size:20px;
+        		margin-top:20px
+        	}
+        	.code{
+        		height:40px;
+        		width:80px;
+        		background-color:#3dc6b6;
+        		line-height:40px;
+        		text-align:center;
+        		color:#fff;
+        		position:absolute;
+        		top:4px;
+        		right:5px;
+        		border-radius:20px
+        	}
+        	.choose_img{
+        		width:18px;
+        		vertical-align:middle;
+        	}
+        	.icon_go{
+        		position:absolute;
+        		top:30px;
+        		left:10px;
+        	}
+        	.forgetBox {overflow:hidden; padding:0.5rem 10%;}
+        </style>
+	</head> 
+	<body class="c-wh">
+		<div class="forgetBox">
+			<div class="accout mart-p-14">
+				<img class="input_img" src="../image/icon/user.png" />
+				<input type="tel" id="mobile"  placeholder="输入手机号" />
+			</div>
+			<div class="accout mar-t-20">
+				<img class="input_img"  src="../image/icon/edit.png" />
+				<input type="tel" id="check_code" maxlength="8" placeholder="输入验证码" />
+				<div class="code getCodetext" id="getCode" onclick="send_code()" tapmode="op8">验证码</div>
+				<div class="code getCodeIngtext" style="display:none;background-color:#999;" id="getCodeIng">验证码</div>
+			</div>
+			<div class="accout mar-t-20">
+				<img class="input_img"  src="../image/icon/lock.png" />
+				<input type="password" id="pwd" placeholder="重新输入密码" />
+			</div>
+			<div class="accout mar-t-20">
+				<img class="input_img"  src="../image/icon/lock.png" />
+				<input type="password" id="rel_pwd" placeholder="确认新密码" />
+			</div>
+			<div class="login" onclick="forget_pwd()" tapmode="op8">确认修改</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../script/init.js"></script>
+	<script type="text/javascript" src="../script/app.js"></script>
+	<script type="text/javascript" src="../script/net.js"></script>
+	<script>
+	var wait=120;
+	apiready = function(){
+		$("#send_button").bind("click",send_code);
+	};
+	function can_see(){
+		if($('#eye').attr('src')=="../image/icon/eye.png"){
+			$('#pwd').attr('type','text');
+			$('#eye').attr('src','../image/icon/psw.png');
+		}else{
+			$('#pwd').attr('type','password');
+			$('#eye').attr('src','../image/icon/eye.png');
+		}
+	}	
+	function time(){    	
+		$toast("发送成功",1000);
+		var t = 59;
+		$("#getCode").css({
+			display : "none"
+		});
+		$("#getCodeIng").css({
+			display : "block"
+		});
+		$(".getCodeIngtext").text('60s');
+        var t1 = setInterval(function() {
+			if (t >= 0) {
+				$("#getCode").css({
+					display : "none"
+				});
+				$("#getCodeIng").css({
+					display : "block"
+				});
+				$(".getCodeIngtext").text("" + t + "s");
+			} else {
+				$(".getCodetext").text("重新获取");
+				$("#getCode").css({
+					display : "block"
+				});
+				$("#getCodeIng").css({
+					display : "none"
+				});
+				clearInterval(t1);
+			}
+			t--;
+		}, 1000);
+	}
+	function forget_pwd()
+	{
+		var mobile = $("#mobile").val();
+	    if (!is_define(mobile))
+	    {
+	        $toast("请输入手机号码");
+	        return false;
+	    }
+	    if(!is_mobile(mobile))
+	    {
+	        $toast("手机号码不正确");
+	        return false;
+	    }
+//	    var true_check_code = $("#true_check_code").val();
+//	    if (!is_define(true_check_code))
+//	    {
+//	        $toast("请获取手机验证码");
+//	        return false;
+//	    }
+	    var check_code = $("#check_code").val();
+	    if (!is_define(check_code))
+	    {
+	        $toast("请输入验证码");
+	        return false;
+	    }
+//	    if(true_check_code!=check_code)
+//	    {
+//	        $toast("验证码输入错误");
+//	        return false;
+//	    }
+	    var pwd = $("#pwd").val();
+	    if (!is_define(pwd))
+	    {
+	        $toast("请输入密码");
+	        return false;
+	    }
+	    if (pwd.length<6)
+	    {
+	        $toast("密码需不少于6位");
+	        return false;
+	    }		    
+	    var rel_pwd = $("#rel_pwd").val();
+	    if (!is_define(rel_pwd))
+	    {
+	        $toast("请输入确认密码");
+	        return false;
+	    }
+	    if (pwd!=rel_pwd){
+	    	$toast("密码输入不正确");
+	    	return false;
+	    }
+	    show_doing();
+	    request("/user/password",{values:{phone:mobile,password:pwd,code:check_code}}, function(data, error){
+	    	hide_doing();
+	    	if(data.code==0){
+			    $toast("找回成功");
+			    setTimeout(function(){
+				    close_name_w('login');
+				    close_name_w('reg');
+				    close_name_w('forget_pwd');			    
+			    },1000);
+	    	}else{
+	    		$toast(data.error);
+	    	}
+	    });		    
+
+	}
+	function send_code()
+	{
+		var mobile = $("#mobile").val();
+	    if (!is_define(mobile))
+	    {
+	        $toast("请输入手机号码");
+	        return false;
+	    }
+	    if(!is_mobile(mobile))
+	    {
+	        $toast("手机号码不正确");
+	        return false;
+	    }
+	    show_doing();
+	    request("/user/register/exist",{values:{phone:mobile}}, function(data, error){
+	    	if(data.code==0){
+	    		if(data.exist==false){
+	    			hide_doing();
+	    			$toast("该手机号码未注册");
+	    		}else{
+			    request("/user/password/sms",{values:{phone:mobile}}, function(data, error){
+			    	hide_doing();
+			    	$("#send_button").bind("click");
+			    	if(data.code==0){
+						time();
+			    	}else{
+			    		$toast(data.error);
+			    	}
+			    });	
+	    		}
+	    	}else{
+	    		$toast(data.error);
+	    	}
+	    });	        
+
+	}
+	</script>
+</html>

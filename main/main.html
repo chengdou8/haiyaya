@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+</head>
+<body class="c-wh">
+<div class="aui-content">
+	<div class="ovd ubb umh25 pdl05 pdr03" onclick="ue_script('root','randomSwitchBtn(1)')"><span class="aui-iconfont aui-icon-right t-939393 fr"></span><span class="aui-label-title ftz085">未完成订单<em id="order_num">(0)</em></span></div>
+	<div class="w10 tx-c dspn" style="padding:10px 0 5px;" id="null">		
+		<div class="w25 area_auto">
+			<img src="../image/icon/null.png" class="w10" />
+		</div>
+		<div class="h10e"></div>
+		<div class="ftz09 pdb10 t-999">暂无订单</div>
+	</div>
+
+	<div id="orderList"></div>
+	<script id="order_temp" type="text/html">
+		<%{%>
+		<div class="ovd pdl05 pdr05 ubb ub-e4e4e4" tapmode="c-f7f7f7">
+			<div onclick="is_login(function(){open_w('order_deal','../user/order_deal.html',{order_id:<%=data.order_id%>})})">
+				<div class="ovd ubb umh2 ub-e4e4e4 pdt03 pdb03 ftz095">
+					<img src="../image/icon/icon_openorder.png" class="fl w10e pdt015 mart03" />
+					<span class="fl pdl05 t-333">前台开单</span>
+					<span class="pdl07 marl05 ubl ub-e4e4e4 t-999 ftz085"><%=data.createtime%></span>
+					<span class="fr t-333"><%=data.room_name%></span>
+				</div>
+				<div class="ovd ubb ub-e4e4e4 pdt05 pdb05">
+					<div class="fl avatar"><img src="../image/icon/zl.png" class="w80" /></div>
+					<div class="umh3 fl pdl08 ftz10"><%=data.item_name%></div>
+					<div class="umh3 fr ftz08 t-939393 pdt04">¥<%=data.item_price%>/<%=data.item_duration%>分钟</div>
+				</div>
+			</div>
+			<%if(data.is_confirm==0){%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown" class="ftz085 pdt025 t-666 timer">尚未接单</div>
+					<input type="button" class="aui-btn aui-btn-warning" data-status="<%=data.status%>" data-time="<%=data.item_duration%>" data-id="<%=data.order_id%>" data-confirm="<%=data.is_confirm%>" onclick="service(this)" value="接单" />
+				</div>
+			<%}else{%>
+				<%if(data.status==1){%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown" class="ftz085 pdt025 t-666 timer">服务尚未开始</div>
+					<input type="button" class="aui-btn aui-btn-primary" data-status="<%=data.status%>" data-time="<%=data.item_duration%>" data-id="<%=data.id%>" data-confirm="<%=data.is_confirm%>" onclick="service(this)" value="上钟" />
+				</div>
+				<%}else if(data.status==2){%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown" class="ftz085 pdt025 t-666 timer">服务倒计时：<span class="minutes t-e51c23"></span><span class="seconds t-e51c23"></span></div>
+					<input type="button" class="aui-btn aui-btn-danger" data-status="<%=data.status%>" data-time="<%=data.item_duration%>" data-id="<%=data.id%>" data-confirm="<%=data.is_confirm%>" onclick="service(this)" value="下钟" />
+				</div>
+				<%}else{%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown" class="ftz085 pdt025 t-666 timer">服务已结束</div>
+					<input type="button" class="aui-btn aui-btn-default" data-status="<%=data.status%>" data-time="<%=data.item_duration%>" data-id="<%=data.id%>" data-confirm="<%=data.is_confirm%>" onclick="service(this);" value="已下钟" />
+				</div>
+				<%}%>
+			<%}%>
+		</div>
+		<%}%>
+	</script>
+	<div class="w10 h05e c-f7f7f7"></div>
+	<div class="ovd ubb umh25 pdl05 pdr03"><span class="aui-label-title ftz085">管理</span></div>
+	<div class="box ovd ftz08 ovd">
+		<div class="tx-c" >
+			<div class="sl w25 pdt10 pdb10 ubb ub-e4e4e4 item_nav pstnr" tapmode="op8" onclick="is_login(function(){open_w('make_point','../user/make_point.html')})">
+				<div><img src="../image/icon/yuyue.png" class="img-h img-mid inblock"  /></div>
+				<div class="mart05">我的预约</div>
+			</div>
+			<div class="sl w25 pdt10 pdb10 ubb ub-e4e4e4 item_nav pstnr" tapmode="op8" onclick="$toast('开发中...')">
+				<div><img src="../image/icon/pingjia.png" class="img-h img-mid inblock"  /></div>
+				<div class="mart05">我的评价</div>
+			</div>
+			<div class="sl w25 pdt10 pdb10 ubb ub-e4e4e4 item_nav pstnr" tapmode="op8" onclick="is_login(function(){open_w('scheduling','../user/scheduling.html')})">
+				<div><img src="../image/icon/paiban.png" class="img-w img-mid inblock"  /></div>
+				<div class="mart05">我的排班</div>
+			</div>
+			<div class="sl w25 pdt10 pdb10 ubb ub-e4e4e4 item_nav pstnr" tapmode="op8" onclick="is_login(function(){open_w('bells','../user/bells.html')})">
+				<div><img src="../image/icon/paizhong.png" class="img-w img-mid inblock"  /></div>
+				<div class="mart05">我的排钟</div>
+			</div>
+			<div class="sl w25 pdt10 pdb10 ubb ub-e4e4e4 item_nav pstnr" tapmode="op8" onclick="is_login(function(){open_w('leave','../user/leave.html')})">
+				<div><img src="../image/icon/qingjia.png" class="img-w img-mid inblock"  /></div>
+				<div class="mart05">我的请假</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="w10 h05e c-f7f7f7"></div>
+	<div class="ovd ubb umh25 pdl05 pdr03"><span class="aui-label-title ftz085">数据分析</span></div>
+	<div class="box ovd ftz08 ovd">
+		<div class="tx-c" >
+			<div class="sl w25 pdt10 pdb10 ubb ub-e4e4e4 item_nav pstnr" tapmode="op8" onclick="$toast('开发中...')">
+				<div><img src="../image/icon/yeji.png" class="img-h img-mid inblock"  /></div>
+				<div class="mart05">我的业绩</div>
+			</div>
+			<div class="sl w25 pdt10 pdb10 ubb ub-e4e4e4 item_nav pstnr" tapmode="op8" onclick="$toast('开发中...')">
+				<div><img src="../image/icon/paiming.png" class="img-h img-mid inblock"  /></div>
+				<div class="mart05">我的排名</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	var service_id;
+	var countTimes;
+	var countTime;
+	apiready = function() {
+      push_down_motive(get_order);
+      get_order();
+    };
+    
+    function get_order() {
+    	var token = get_local('openid');
+    	show_doing();
+	    request("m=Masseur&a=index",{values:{token:token}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0&&datas.data!=''){
+	    		service_id =datas.data.id;
+	    		$('#order_num').text('('+datas.count+')');
+	    		var html=bt('order_temp',datas);
+				$("#orderList").html(html);
+				var countdown = datas.data.countdown;
+				var difference_time=datas.data.difference_time;
+				if(datas.data.is_confirm==1&&datas.data.status==1) {
+					var hour = Math.floor(difference_time/3600).toString();
+					var min = Math.floor(difference_time/60-hour*60).toString();
+					var hm = Math.floor(difference_time)-hour*3600-min*60;
+					$('#countdown').html('接单：'+'<span class="hour t-e51c23">'+hour+'小时</span>'+'<span class="minutes t-e51c23">'+min+'分钟</span>'+'<span class="seconds t-e51c23">'+hm+'秒</span>');
+					timein(difference_time);
+				}
+					
+				if(datas.data.status==2) {
+					clearInterval(countTime);
+					if(countdown>0) {
+						var min = Math.floor(countdown/60).toString();
+						var hm = Math.floor(countdown)-min*60;
+						$('#countdown').html('服务倒计时：'+'<span class="minutes t-e51c23">'+min+'分钟</span>'+'<span class="seconds t-e51c23">'+hm+'秒</span>');
+			    		timeout(countdown);
+			    	} else {
+			    		$('#countdown').html('服务已超时');
+			    	}
+				} else if(datas.data.status==3) {
+					clearInterval(countTimes);
+				}
+				
+				Echo.init({offset: 0,throttle:0});
+				api.parseTapmode();
+				push_down_over();
+				if(!$("#null").hasClass('dspn')) {
+					$("#null").addClass("dspn");
+				}
+	    	} else {
+		    	$("#null").removeClass("dspn");
+	    	}
+   		})
+    }
+    
+    function service(obj) {
+    	var token = get_local('openid');
+    	var value = $(obj).val();
+    	var id = $(obj).attr('data-id');
+    	var times = $(obj).attr('data-time');
+    	var status = $(obj).attr('data-status');
+    	var confirm= $(obj).attr('data-confirm');
+    	var netAudio = api.require("netAudio");
+    	var path;
+    	if(confirm==0) {
+    		show_doing();
+		    request("m=Masseur&a=confirm_order",{values:{token:token,id:id}}, function(data,error){
+	   			hide_doing();
+		    	if(data.code==0){
+		    		if (api.systemType == 'ios'){
+		    			path="fs://res/success.mp3"
+		    		}else {
+		    		 	path="widget://res/success.mp3"
+		    		}
+		    		netAudio.play({
+					    path: path
+					});
+		    		get_order();
+		    		ue_script_f("root","order","get_orderList('first')");
+		    	}
+	   		})
+    	} else {
+	    	if(status==1) {
+		    	show_doing();
+			    request("m=Masseur&a=up_clock",{values:{token:token,id:id}}, function(data,error){
+		   			hide_doing();
+			    	if(data.code==0){
+			    		$toast('上钟开始！');
+			    		get_order();
+			    		ue_script_f("root","order","get_orderList('first')");
+			    	}
+		   		})
+	    	} else if(status==2) {
+		    	show_doing();
+			    request("m=Masseur&a=down_clock",{values:{token:token,id:id}}, function(data,error){
+		   			hide_doing();
+			    	if(data.code==0){
+			    		$toast('下钟成功！');
+			    		get_order();
+			    		ue_script_f("root","order","get_orderList('first')");
+			    	}
+		   		})
+	    	} else {
+	    		$toast('服务已下钟');
+	    	}
+	    }
+    }
+    
+    function timeout(times){
+		if(times>0) {
+			countTimes = setInterval(function() {
+				times = --times < 0 ? 0 : times;
+				var min = Math.floor(times/60).toString();
+				if(min.length <= 1) {
+					min = "0" + min;
+				}			
+				var hm = Math.floor(times)-min*60;
+				if(hm.length <= 1) {
+					hm = "0" + hm;
+				}
+				$('#countdown .minutes').html(min+'分钟');
+				$('#countdown .seconds').html(hm+'秒');
+				if(times == 0) {
+					clearInterval(countTimes);
+				}
+			},1000);
+		} else {
+			clearInterval(countTimes);
+			$('#countdown').html('该服务已结束');
+		}
+	}
+	
+	function timein(time){
+		countTime = setInterval(function() {
+			time = ++time < 0 ? 0 : time;
+			var hour = Math.floor(time/3600).toString();
+			var min = Math.floor(time/60-hour*60).toString();
+			var hm = Math.floor(time)-hour*3600-min*60;
+			$('#countdown .hour').html(hour+'小时');
+			$('#countdown .minutes').html(min+'分钟');
+			$('#countdown .seconds').html(hm+'秒');
+		},1000);
+	}
+</script>
+</html>

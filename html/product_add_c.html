@@ -1,0 +1,203 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+	<div class="w10 tx-c dspn" style="height:143px; padding-top:15px;" id="null">		
+		<div class="w25 area_auto">
+			<img src="../image/icon/null.png" class="w10" />
+		</div>
+		<div class="h10e"></div>
+		<div class="ftz09 t-999">暂无项目</div>
+	</div>
+	<div id="product" class="c-wh ovd mart05"></div>
+	
+	<script id="product_temp" type="text/html">
+	<div class="sl side_tab">
+		<%for(var i=0; i<data.length;i++){%>
+			<%if(i==0) {%>
+			<div class="side_item aui-active" onclick="swicthTab(this)"><%=data[i].category_name%><span class="dot dspn"></span></div>
+			<%}else{%>
+			<div class="side_item" onclick="swicthTab(this)"><%=data[i].category_name%></div>
+			<%}%>
+		<%}%>
+	</div>
+	<div class="side_content">
+		<%for(var i=0; i<data.length;i++){%>
+		<div class="swicth_item">
+		<ul class="aui-list aui-list-in">
+			<%for(var j=0; j<data[i].product_list.length;j++){
+				var cover;
+				if(is_define(data[i].product_list[j].cover)) {
+					cover = data[i].product_list[j].cover;
+				} else {
+					cover = '../image/icon/zl_gra.png';
+				};
+			%>
+			<li class="aui-list-item pdt075 pdb075">
+				<div class="aui-list-item-inner">
+					<div class="itemimg"><img src="<%=cover%>" class="w80" /></div>
+					<div class="aui-list-middle">
+						<div class="aui-list-row t-333"><%=data[i].product_list[j].product_name%></div>
+						<div class="aui-list-row t-fd363b ftz085">¥<%=data[i].product_list[j].product_price%></div>
+					</div>
+					<div class="aui-list-right flex15 flex_between pdt05">
+						<img src="../image/icon/del.png" class="product_del w15e h15e hidden" onclick="product_reduce(this,<%=data[i].product_list[j].product_price%>,<%=data[i].product_list[j].id%>)" />
+						<input type="number" value="0" class="proinput hidden" readonly />
+						<img src="../image/icon/add.png" class="product_add w15e h15e" onclick="product_add(this,<%=data[i].product_list[j].product_price%>,<%=data[i].product_list[j].id%>)" />
+					</div>
+				</div>
+			</li>
+			<%}%>
+      	</ul>
+      	</div>
+      	<%}%>
+	</div>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript">
+	var product = {};
+	var products = new Array();
+	var pronum=0;
+	var total=0;
+	apiready = function(){
+		get_product();
+	};
+	
+	
+	function get_product() {
+    	show_doing();
+	    request("m=Masseur&a=get_product",{values:{}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		if(datas.data.length>0) {
+					$('#product').html(bt('product_temp',datas));
+				} else {
+					$('#product').html(no_data);
+				}
+				api.parseTapmode();		
+	    	} else {
+	    		$("#null").removeClass("dspn");
+	    	}
+   		})
+	}
+	
+	function product_add(obj,price,pid) {
+		var parent = $(obj).parent('.aui-list-right');
+		var number = parseInt(parent.find('.proinput').val());
+		pronum = parseInt($('.side_tab .aui-active .dot').text());
+		if(parent.find('.product_del').hasClass('hidden')) {
+			parent.find('.product_del').removeClass('hidden');
+			parent.find('.proinput').removeClass('hidden');
+		}
+		
+		number=number+1;
+		parent.find('.proinput').val(number);
+		product={p_id:pid,p_types:2,types:"",number:number};
+		
+		if(products.length<=0) {
+			products.push(product);
+		} else {
+			for(var i=0;i<products.length;i++){
+	  			if(pid==products[i].p_id){
+	  				products.splice(i,1);
+	  				products.push(product);
+	  			} else {
+	  				products.splice(i+1,1);
+	  				products.push(product);
+	  			}
+	  		}
+		}
+		
+		if(pronum>=number) {
+  			pronum=pronum+1;
+  			total = total + price;
+  			$('.side_tab .aui-active .dot').removeClass('dspn').text(pronum);
+  		} else {
+  			total = number * price;
+  			$('.side_tab .aui-active .dot').removeClass('dspn').text(number);
+  		}		
+		ue_script("product_add","get_total('"+total+"')");
+	}
+	
+	function product_reduce(obj,price,pid) {
+		var parent = $(obj).parent('.aui-list-right');
+		var number = parseInt(parent.find('.proinput').val());
+		pronum = parseInt($('.side_tab .aui-active .dot').text());
+		if(number==1) {
+			parent.find('.product_del').addClass('hidden');
+			parent.find('.proinput').addClass('hidden');
+			parent.find('.proinput').val(0);
+		} else {
+			number=number-1;
+			parent.find('.proinput').val(number);
+	  	}
+	  	product={p_id:pid,p_types:2,types:"",number:number};
+	  	if(products.length>0) {
+			for(var i=0;i<products.length;i++){
+	  			if(pid==products[i].p_id){
+	  				products.splice(i,1);
+	  				if(parseInt(parent.find('.proinput').val())>0) {
+	  					products.push(product);
+	  				}
+	  			} else {
+	  				products.splice(i+1,1);
+	  				if(parseInt(parent.find('.proinput').val())>0) {
+	  					products.push(product);
+	  				}
+	  			}
+	  		}
+	  	}
+
+	  	if(pronum>=number) {
+  			pronum=pronum-1;
+  			total = total - price;
+  			if(pronum>0) {
+  				$('.side_tab .aui-active .dot').removeClass('dspn').text(pronum);
+  			} else {
+  				$('.side_tab .aui-active .dot').addClass('dspn').text(0);
+  			}
+  		}  	
+		ue_script('product_add','get_total('+total+')');	
+	}
+	
+	function submit() {
+		if(products.length==0) {
+			$toast('请选择产品！');
+			return false;
+		}
+		show_doing();
+	    request("m=Masseur&a=post_additional_orders",{values:{order_id:api.pageParam.order_id,p_orders:products}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		ue_script_f('order_deal','order_deal_c','get_deal("'+api.pageParam.order_id+'")');
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    		setTimeout(function(){ue_script("product_add","close_w()");},1000);
+	    	} else {
+	    		$toast(data.msg)
+	    	}
+   		})
+	}
+	
+	function swicthTab(obj) {
+		var index=$(obj).index();
+	    $(obj).addClass("aui-active").siblings().removeClass("aui-active");
+	    $(".side_content").find(".swicth_item").hide().eq(index).show();
+	}
+</script>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	</head>
+<body>
+	<div class="w10 c-3dc6b6" id="header">
+		<div class="box w95 area_auto pstnr h22e t-wh">
+			<div class="ovd tx-c ftz12">添加项目</div>
+			<span class="pstna absl0 abst01"  onclick="close_w();" tapmode=""><img src="../image/left.png" class="w15e h15e"></span>
+		</div>
+	</div>
+	
+	<div id="footer" class="ubt ub-e4e4e4 c-f7f7f7">
+		<ul class="clo_three h25e">
+			<li class="col_list_two">合计：<span class="t-fd363b" id="total">¥0.00</span></li>
+			<li class="col_list" tapmode="" onclick="ue_script_f('project_add','project_add_c','submit()')">确定</li>		
+		</ul>
+	</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script>
+apiready = function(){
+	open_f_f("project_add_c","project_add_c.html",api.pageParam);
+}
+function get_total(number) {
+	$('#total').html('¥'+ number+'.00');
+}
+</script>
+</html>

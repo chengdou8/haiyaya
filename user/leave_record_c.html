@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/css.css" />
+</head>
+<body>
+	<ul class="aui-list aui-list-in" id="leave_record"></ul>
+	<script id="leave_record_temp" type="text/html">
+		<%for(var i=0; i<data.length;i++){%>
+		<li class="aui-list-item" <%if(data[i].status=='待审核'){%> onclick="edit_leave('<%=data[i].id%>')"<%}%>>
+            <div class="aui-list-item-inner<%if(data[i].status=='待审核'){%> aui-list-item-arrow<%}%>">
+                <div class="aui-list-item-label t-555 w15"><%=data[i].type%></div>
+                <div class="aui-list-item-middle w7 pdt03 pdb03">
+                	<div class="t-939393 ftz07 tx-l"><%=data[i].start_time%>-<%=data[i].end_time%></div>
+                	<div class="ftz08 tx-l t-666"><%=data[i].remark%></div>
+                </div>
+                <%if(data[i].status=='待审核'){%>
+                <div class="w15 ftz08 t-fd363b tx-r"><%=data[i].status%></div>
+                <%}else{%>
+                <div class="w15 ftz08 t-939393 tx-r"><%=data[i].status%></div>
+                <%}%>
+            </div>
+        </li>
+        <%}%>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		get_leave();
+		push_down_motive(function(){
+			get_leave();
+		});
+	};
+	
+	function get_leave() {
+    	show_doing();
+	    request("m=leave&a=index",{values:{}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		if(datas.data.length>0) {
+	    			$('#leave_record').html(bt('leave_record_temp',datas));
+	    		} else {
+	    			$('#leave_record').html(no_data);
+	    		}
+	    		
+	    		if(datas.data.length<0) {
+	    			$('#leave_record').append('<div class="w10 tx-c umh3 t-999 ftz095 c-f7f7f7">'+datas.count+'条请假记录</div>');
+	    		}
+	    	} else {
+	    		$('#leave_record').html(no_data);
+	    	}
+	    	
+	    	api.parseTapmode();
+			push_down_over();
+   		})
+	}
+	
+	function edit_leave(id) {
+		open_w('leave','../user/leave.html',{id:id})
+	}
+</script>
+</html>

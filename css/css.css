@@ -1,0 +1,22 @@
+/*日历*/
+.calendar *{box-sizing:border-box;font-size:14px}
+.calendar{cursor:default; background-color:#fff;}
+.calendar-sm .c-pad-top{padding-top:2%}
+.c-event-top{position: relative; text-align: center;}
+/*.calendar .c-pad-top{padding-top:3%}*/
+.c-grid{width:100%; color: #bbc3cd; overflow:hidden; padding:0.1em 0.5em;}
+.c-grid div:nth-child(14),.c-grid div:nth-child(21),.c-grid div:nth-child(28),.c-grid div:nth-child(35),.c-grid div:nth-child(42),.c-grid div:nth-child(49) {border-right:1px solid #e4e4e4;}
+.c-grid div:nth-child(43),.c-grid div:nth-child(44),.c-grid div:nth-child(45),.c-grid div:nth-child(46),.c-grid div:nth-child(47),.c-grid div:nth-child(48),.c-grid div:nth-child(49) {border-bottom:1px solid #e4e4e4;}
+.c-day{width:14.285714%;height:45px;float:left;text-align:center;color: #bbc3cd;line-height: 45px; border-left: 1px solid #e4e4e4;border-top: 1px solid #e4e4e4;}
+.c-day-previous-month{width:14.285714%;height:45px;float:left;text-align:center;background-color:#f7f7f7; border-left: 1px solid #e4e4e4;border-top: 1px solid #e4e4e4;}
+.c-day-next-month{width:14.285714%;height:45px;float:left;text-align:center;background-color:#f7f7f7;border-left: 1px solid #e4e4e4;border-top: 1px solid #e4e4e4}
+.c-week-day{width:14.285714%;height:10.38%;line-height: 25px;float:left;text-align:center;padding-top:0.5em;}
+.c-next{width:24px;height:24px;text-align:right;cursor:pointer;text-align: center;background: url(../image/right_gra.png) no-repeat; background-size:100%; position: absolute;bottom:9px;right: 50%; margin-right:-72px;}
+.c-previous{width:24px;height:24px;text-align:left;cursor:pointer;text-align: center;background: url(../image/left_gra.png) no-repeat; background-size:100%;position: absolute;bottom:9px;left: 50%; margin-left:-72px;}
+.c-month{width:100%;height:inherit;text-align:center;}
+.c-month-top{font-size: 20px; padding:0.25em 0; border-bottom: 1px solid #e4e4e4;}
+.c-month-center{font-size: 22px;color: #fff;display:none;}
+.c-month-bottom{font-size: 22px;height: 0px}
+.c_block {width:12px; height:12px; margin:3.5px 5px;}
+
+

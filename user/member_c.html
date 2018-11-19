@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+	<div id="member_deal"></div>
+	<script id="member_deal_temp" type="text/html">
+	<%if(is_define(data)) {
+		var sex_img;
+		var head_img;
+		if(data.sex=='女') {
+			sex_img='../image/icon/sex_woman.png';
+			head_img='../image/head_3.jpg';
+		} else {
+			sex_img='../image/icon/sex_man.png';
+			head_img='../image/head_2.jpg';
+		}
+		var age = jsGetAge(data.birthday);
+	%>
+	<div class="c-wh ovd pdt06 pdb06 ubb pdl07">
+      <div class="sl w50e tx-l" id="face_img" tapmode="op9"><img id="face" src="<%=head_img%>" class="w40e h40e uc-a"></div>
+      <div class="user_info">
+      	<div class="user_name ovd">
+      		<span class="sl ftz10"><%=data.member_name%></span>
+      		<span class="marl05 sl user_m uc-a02">
+      			<span class="sex sl"><img src="<%=sex_img%>"></img></span>
+      			<span class="age sl"><%=age%>岁</span>
+      		</span>
+      	</div>
+      	<div class="ftz08 t-555"><%=data.member_tel%></div>
+      	<div class="ftz08 t-939393">会员编号：<%=data.member_no%></div>
+      	<div class="ftz08 t-939393">会员来源：线下-前台添加</div>
+      	<div class="ftz08 t-939393">成为会员时间：<%=data.createtime%></div>
+      </div>
+    </div>
+    <%}%>
+    
+    <%if(is_define(data.remark)){%>
+	<ul class="aui-list aui-form-list">
+		<li class="aui-list-item aui-list-item-arrow pdr03" onclick="open_w('note_add','../html/note_add.html',{member_id:<%=data.id%>,remark:'<%=data.remark%>'})">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-label">备注:</div>
+				<div class="aui-list-item-right pdr15"><%=data.remark%></div>
+			</div>
+		</li>
+	</ul>
+	<%}else{%>
+	<ul class="aui-list aui-form-list">
+		<li class="aui-list-item aui-list-item-arrow" onclick="open_w('note_add','../html/note_add.html',{member_id:<%=data.id%>})">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">添加备注</div>
+			</div>
+		</li>
+	</ul>
+	<%}%>
+	</script>
+	
+	<div class="aui-tab mart05">
+		<div class="aui-tab-item aui-active" onclick="swicthTab(this,0)">卡券</div>
+		<div class="aui-tab-item" onclick="swicthTab(this,1)">账户记录</div>
+		<div class="aui-tab-item" onclick="swicthTab(this,2)">健康档案</div>
+	</div>
+	
+	<div class="member_Content">
+		<div class="member_item">
+			<div id="member_card" class="card_list"></div>
+			<script id="member_card_temp" type="text/html">
+			<div class="c-wh umh25 pdl05 pdr03"><span class="aui-label-title ftz085">会员卡</span></div>
+			<div class="card_box pdl10 pdr10 c-wh pdb10">
+			<%for(var i=0;i<member_card.length;i++) {%>
+		      <div class="card_item c-d7b371 t-wh marb10">
+		        <div class="card_top"><%=member_card[i].shop_name%></div>
+		        <div class="card_content">
+		          <div class="card_img"><img src="../image/card.jpg" /></div>
+		          <dl class="card_dl ftz09">
+		            <dd>余额：¥<%=member_card[i].balance%></dd>
+		            <dd>折扣：<%=member_card[i].discount%>折</dd>
+		          </dl>
+		        </div>
+		        <div class="card_bottom"><%=member_card[i].address%><span class="left"></span><span class="right"></span></div>
+		      </div>    
+			<%}%>
+			</div>
+			</script>
+		
+			<div id="numcard" class="card_list"></div>
+			<script id="numcard_temp" type="text/html">
+			<div class="c-wh umh25 pdl05 pdr03"><span class="aui-label-title ftz085">次卡</span></div>
+			<div class="card_box pdl10 pdr10 c-wh pdb10">
+			<%for(var i=0;i<numcard.length;i++) {%>
+		      <div class="card_item c-c7c7c7 t-wh marb10">
+		        <div class="card_top"><%=numcard[i].shop_name%></div>
+		        <div class="card_content">
+		          <div class="card_img"><img src="../image/card.jpg" /></div>
+		          <dl class="card_dl ftz09">
+		            <dd><%=numcard[i].project_name%></dd>
+		            <dd>剩余次数：<%=numcard[i].card_num%></dd>
+		          </dl>
+		        </div>
+		        <div class="card_bottom"><%=numcard[i].address%><span class="left"></span><span class="right"></span></div>
+		      </div>    
+			<%}%>
+			</div>
+			</script>
+			
+			<div id="deadline_card" class="card_list"></div>
+			<script id="deadline_card_temp" type="text/html">
+			<div class="c-wh umh25 pdl05 pdr03"><span class="aui-label-title ftz085">期限卡</span></div>
+			<div class="card_box pdl10 pdr10 c-wh pdb10">
+			<%for(var i=0;i<deadline.length;i++) {%>
+		      <div class="card_item c-f17797 t-wh marb10">
+		        <div class="card_top"><%=deadline[i].shop_name%></div>
+		        <div class="card_content">
+		          <div class="card_img"><img src="../image/card.jpg" /></div>
+		          <dl class="card_dl ftz09">
+		            <dd><%=deadline[i].project_name%></dd>
+		            <dd>单日使用上限：<%=deadline[i].day_ceiling%>次</dd>
+		            <dd>到期时间：<%=deadline[i].end_time%></dd>
+		          </dl>
+		        </div>
+		        <div class="card_bottom"><%=deadline[i].address%><span class="left"></span><span class="right"></span></div>
+		      </div>    
+			<%}%>
+			</div>
+			</script>
+			
+			<div id="course_card" class="card_list"></div>
+			<script id="course_card_temp" type="text/html">
+			<div class="c-wh umh25 pdl05 pdr03"><span class="aui-label-title ftz085">疗程卡</span></div>
+			<div class="card_box pdl10 pdr10 c-wh pdb10" style="margin-bottom: 0;">
+			<%for(var i=0;i<course.length;i++) {%>
+		      <div class="card_item c-00c8b1 t-wh marb10">
+		        <div class="card_top"><%=course[i].shop_name%></div>
+		        <div class="card_content">
+		          <div class="card_img"><img src="../image/card.jpg" /></div>
+		          <dl class="card_dl ftz09">
+		            <dd><%=course[i].count%>个项目</dd>
+		            <%for(var j=0;j<course[i].projects.length;j++) {%>
+		            <dd class="flex_between pdt01">
+		            	<div><%=course[i].projects[j].project_name%></div>
+		            	<div><%=course[i].projects[j].card_num%></div>
+		            	<div>¥<%=course[i].projects[j].item_price%></div>
+		            </dd>
+		            <%}%>
+		          </dl>
+		        </div>
+		        <div class="card_bottom"><%=course[i].address%><span class="left"></span><span class="right"></span></div>
+		      </div>    
+			<%}%>
+			</div>
+			</script>
+		</div>
+		<div class="member_item dspn">
+			<div id="financial" class="c-wh"></div>
+			<script id="financial_temp" type="text/html">
+			<ul class="aui-list aui-form-list">
+			<%for(var i=0;i<financial.length;i++) {
+				var transaction_type;
+				var type=financial[i].type;
+				if(financial[i].transaction_type==1) {
+					transaction_type='会员卡'
+				} else if(financial[i].transaction_type==2) {
+					transaction_type='次卡'
+				} else if(financial[i].transaction_type==3) {
+					transaction_type='期限卡'
+				} else if(financial[i].transaction_type==4) {
+					transaction_type='疗程卡'
+				}
+				if(financial[i].type==1) {
+					type='充值'
+				}else if(financial[i].type==2){
+					type='消费'
+				}
+			%>
+				<li class="aui-list-item">
+					<div class="aui-list-item-inner pdr10">
+						<div class="t-666 ftz075"><%=financial[i].createtime%></div>
+						<div class="t-666 ftz075 tx-c"><%=transaction_type%><%=type%></div>
+						<%if(financial[i].transaction_type==1) {%>
+						<div class="ftz075 tx-c<%if(financial[i].type==1){%> t-fd363b<%}else{%> t-3dc6b6<%}%>">
+							<%if(financial[i].type==1){%>+<%}else{%>-<%}%><%=financial[i].transaction_money%>
+							<%if(is_define(financial[i].send_money)){%><div>赠：<%=financial[i].send_money%></div><%}%> 
+						</div>
+						<%}else if(financial[i].transaction_type==3){%>
+						<div class="ftz075 tx-c<%if(financial[i].type==1){%> t-fd363b<%}else{%> t-3dc6b6<%}%>">
+							<%=financial[i].item_name%>
+							<div><%if(financial[i].type==1){%>+<%}else{%>-<%}%><%=financial[i].transaction_days%>天</div>
+						</div>
+						<%}else{%>
+						<div class="ftz075 tx-c<%if(financial[i].type==1){%> t-fd363b<%}else{%> t-3dc6b6<%}%>">
+							<%=financial[i].item_name%>
+							<div><%if(financial[i].type==1){%>+<%}else{%>-<%}%><%=financial[i].transaction_num%>次</div>
+						</div>
+						<%}%>
+						<%if(financial[i].transaction_type==1) {%>
+						<div class="ftz075 t-666 tx-r">余额<br><%=financial[i].now_money%></div>
+						<%}else if(financial[i].transaction_type==3){%>
+						<div class="ftz075 t-666 tx-r">剩余<br><%=financial[i].now_days%>天</div>
+						<%}else{%>
+						<div class="ftz075 t-666 tx-r">剩余<br><%=financial[i].now_num%>次</div>
+						<%}%>
+					</div>
+				</li>
+			<%}%>
+			</ul>
+			</script>
+		</div>
+		<div class="member_item dspn">
+			<div id="tags" class="c-wh"></div>
+			<script id="tags_temp" type="text/html">
+			<div class="c-wh umh25 ubb pdl05 pdr03"><span class="aui-label-title ftz085">诊断信息</span></div>
+			<div class="tags_box ovd c-wh">
+				<%for(var i=0;i<tags.length;i++) {%>
+				<span class="sl tag"><%=tags[i].label%></span>
+				<%}%>
+				<span class="sl add_tag" onclick="open_w('tag_add','../html/tag_add.html',{member_id:<%=data.id%>})">+ 添加标签</span>
+			</div>
+			</script>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	var member_id;
+	apiready = function(){
+		get_member_deal(api.pageParam.id,api.pageParam.num);
+	};
+	
+	function get_member_deal(id,num) {
+		if(is_define(id)) {
+			member_id=id;
+		} else {
+			member_id=api.pageParam.id;
+		}
+		if(num==2) {
+			$('.aui-tab').find('.aui-tab-item').eq(2).addClass('aui-active').siblings().removeClass("aui-active");
+			$(".member_Content").find(".member_item").addClass('dspn').eq(2).removeClass('dspn');
+		}
+    	show_doing();
+	    request("m=Order&a=member_detail",{values:{member_id:member_id}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		$('#member_deal').html(bt('member_deal_temp',datas));
+	    		if(datas.card.member_card.length>0) {
+	    			$('#member_card').html(bt('member_card_temp',datas.card));
+	    		}
+	    		if(datas.card.numcard.length>0) {
+	    			$('#numcard').html(bt('numcard_temp',datas.card));
+	    		}
+	    		if(datas.card.deadline.length>0) {
+	    			$('#deadline_card').html(bt('deadline_card_temp',datas.card));
+	    		}
+	    		if(datas.card.course.length>0) {
+	    			$('#course_card').html(bt('course_card_temp',datas.card));
+	    		}
+	    		if(datas.financial.length>0) {
+	    			$('#financial').html(bt('financial_temp',datas));
+	    		} else {
+	    			$('#financial').html(no_data)
+	    		}
+	    		$('#tags').html(bt('tags_temp',datas));
+	    	} else {
+	    		$toast('异常情况，请稍候再试！');
+	    	}    	
+	    	api.parseTapmode();
+   		})
+	}
+	
+	function jsGetAge(strBirthday){       
+	    var returnAge;
+	    var strBirthdayArr=strBirthday.split("-");
+	    var birthYear = strBirthdayArr[0];
+	    var birthMonth = strBirthdayArr[1];
+	    var birthDay = strBirthdayArr[2];
+	    
+	    d = new Date();
+	    var nowYear = d.getFullYear();
+	    var nowMonth = d.getMonth() + 1;
+	    var nowDay = d.getDate();
+	    
+	    if(nowYear == birthYear){
+	        returnAge = 0;//同年 则为0岁
+	    }
+	    else{
+	        var ageDiff = nowYear - birthYear ; //年之差
+	        if(ageDiff > 0){
+	            if(nowMonth == birthMonth) {
+	                var dayDiff = nowDay - birthDay;//日之差
+	                if(dayDiff < 0)
+	                {
+	                    returnAge = ageDiff - 1;
+	                }
+	                else
+	                {
+	                    returnAge = ageDiff ;
+	                }
+	            }
+	            else
+	            {
+	                var monthDiff = nowMonth - birthMonth;//月之差
+	                if(monthDiff < 0)
+	                {
+	                    returnAge = ageDiff - 1;
+	                }
+	                else
+	                {
+	                    returnAge = ageDiff ;
+	                }
+	            }
+	        }
+	        else
+	        {
+	            returnAge = -1;//返回-1 表示出生日期输入错误 晚于今天
+	        }
+	    }
+	    return returnAge;//返回周岁年龄  
+	}
+	
+	function swicthTab(obj,index) {
+		$(obj).addClass('aui-active').siblings().removeClass("aui-active");
+		$(".member_Content").find(".member_item").addClass('dspn').eq(index).removeClass('dspn');
+	}
+</script>
+</html>

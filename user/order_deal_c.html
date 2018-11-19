@@ -1,0 +1,498 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+	<div id="deal"></div>
+	<script id="deal_temp" type="text/html">
+	<%if(is_define(member_info)) {
+		var sex_img;
+		var head_img;
+		if(member_info.sex=='女') {
+			sex_img='../image/icon/sex_woman.png';
+			head_img='../image/head_3.jpg';
+		} else {
+			sex_img='../image/icon/sex_man.png';
+			head_img='../image/head_2.jpg';
+		}
+		var age = jsGetAge(member_info.birthday);
+	%>
+	<div class="c-wh ovd pdt06 pdb06 pdl07 marb05">
+      <div class="sl w50e tx-l" id="face_img" tapmode="op9"><img id="face" src="<%=head_img%>" class="w40e h40e uc-a"></div>
+      <div class="user_info">
+      	<div onclick="open_w('member','../user/member.html',{id:<%=member_info.id%>,num:0})">
+	      	<div class="user_name ovd">
+	      		<span class="sl ftz10"><%=member_info.member_name%></span>
+	      		<span class="marl05 sl user_m uc-a02">
+	      			<span class="sex sl"><img src="<%=sex_img%>"></img></span>
+	      			<span class="age sl"><%=age%>岁</span>
+	      		</span>
+	      	</div>
+	      	<div class="ftz08 t-555"><%=member_info.member_tel%></div>
+	      	<div class="ftz08 t-939393">会员编号：<%=member_info.member_no%></div>
+	    </div>
+      	<div class="ovd mart03 t-3dc6b6 ftz095" onclick="open_w('member','../user/member.html',{id:<%=member_info.id%>,num:2});"><img src="../image/icon/add.png" class="sl mart1 marr02 w12e inblock" /> 添加健康档案</div>
+      </div>
+    </div>
+    <%}%>
+	<div class="c-wh pdt06 pdb05 pdl07 marb05">
+      <p>订单来源：<%=order_info.from%></p>
+      <p>开单时间：<%=order_info.createtime_data%></p>
+    </div>
+    <div class="ovd c-wh ubb umh25 pdl05 pdr03">
+    	<%if(order_info.status>0&&up_count==0&&down_count==0&&is_evaluation==0){%>
+    	<input type="button" class="sr aui-btn aui-btn-primary mart05 marr05" onclick="open_f_mask('widget://html/qrCode.html',{order_id:<%=order_id%>,masseur_id:<%=result_project[0].masseur_id%>})" value="评价" />
+    	<%}%>
+    	<span class="aui-label-title ftz085">服务信息</span>
+    </div>
+    <%for(var i=0;i<result_project.length;i++){
+    	var cover;
+    	if(is_define(result_project[i].cover)) {
+    		cover=result_project[i].cover
+    	} else {
+    		cover='../image/icon/logo.png'
+    	}
+    %>
+      <div class="inforDetail marb05">
+        <div class="artificer">
+          <div class="artificerBox">
+	          <div class="artificerImg"><img src="<%=cover%>" /></div>
+	          <div class="artificerCon">
+	            <p><%=result_project[i].nick_name%></p>
+	            <p><%=order_info.room_name%></p>
+	          </div>
+          </div>
+          <%if(order_info.status==1){%>
+          	<%if(order_info.is_confirm==0&&is_one_uptime==0) {%>
+          		<div class="operation" onclick="showUpload('projectConfirm','<%=order_info.id%>')">操作</div>
+          	<%}else{%>
+	          	<%if(up_count>0){%>
+	          		<div class="operation" onclick="showUpload('projectAlluplock','<%=order_info.id%>')">操作</div>
+	          	<%}else if(up_count==0 && down_count>0){%>
+	          		<div class="operation" onclick="showUpload('projectAlldownlock','<%=order_info.id%>')">操作</div>
+	          	<%}%>
+	        <%}%>
+          <%}%>
+          
+          <%if(order_info.status==2){%>
+          	<%if(order_info.is_confirm==0&&is_one_uptime==0) {%>
+          		<div class="operation" onclick="showUpload('projectConfirmed','<%=order_info.id%>')">操作</div>
+          	<%}else{%>
+	          	<%if(up_count>0){%>
+	          		<div class="operation" onclick="showUpload('projectAlluplocked','<%=order_info.id%>')">操作</div>
+	          	<%}else if(up_count==0 && down_count>0){%>
+	          		<div class="operation" onclick="showUpload('projectAlldownlocked','<%=order_info.id%>')">操作</div>
+	          	<%}%>
+	        <%}%>
+          <%}%>
+
+          <div class="price">¥<%=order_info.total_amount%></div>
+        </div>
+        <%var prject =result_project[i].project_list;
+            for(var j=0;j<prject.length;j++){%>
+        <div class="prject">
+          <div class="">
+            <div><%=prject[j].title%></div>
+            <p>¥<%=prject[j].unit_price%>/<%=prject[j].duration%>分钟</p>
+          </div>
+          <%if(order_info.status==-1){%>
+            <div class="artificerCon"><p>已取消</p></div>
+          <%}else{%>
+          <div class="artificerCon">
+            <%if(prject[j].up_time<=0){%>
+              <p>待上钟</p>
+            <%}else if(prject[j].up_time>0 && prject[j].down_time==0){%>
+              <p>已上钟</p>
+            <%}else if(prject[j].down_time>0){%>
+              <p>已下钟</p>
+            <%}%>
+          </div>
+          <%}%>
+          <%if(order_info.status==1){%>
+	          <%if(prject[j].up_time==0) {%>
+	          	<div class="operation" onclick="showUpload('uplock','<%=prject[j].id%>')">操作</div>
+	          <%}else if(prject[j].up_time>0 && prject[j].down_time==0){%>
+				<div class="operation" onclick="showUpload('downlock','<%=prject[j].id%>')">操作</div>
+	          <%}%>
+	      <%}%>
+	      <%if(order_info.status==2){%>
+	          <%if(prject[j].up_time==0) {%>
+	          	<div class="operation" onclick="showUpload('uplocknodel','<%=prject[j].id%>')">操作</div>
+	          <%}else if(prject[j].up_time>0 && prject[j].down_time==0){%>
+				<div class="operation" onclick="showUpload('downlock','<%=prject[j].id%>')">操作</div>
+	          <%}%>
+	      <%}%>
+          <div class="price">¥<%=prject[j].total_price%></div>
+        </div>
+        <%}%>
+      </div>
+    <%}%>
+
+    <%if(result_product.length>0){%>
+    <div class="ovd c-wh umh25 pdl05 pdr03"><span class="aui-label-title ftz085">产品信息</span></div>
+    <%for(var i=0;i<result_product.length;i++){%>
+      <div class="prject">
+        <div class="">
+          <div><%=result_product[i].title%></div>
+          <p>¥<%=result_product[i].unit_price%></p>
+        </div>
+        <div class="artificerCon"><%=result_product[i].number%></div>
+        <%if(order_info.status==1){%>
+        <div class="operation" onclick="showUpload('product','<%=result_product[i].id%>')">操作</div>
+        <%}%>
+        <div class="price">¥<%=result_product[i].total_price%></div>
+      </div>
+    <%}%>
+    <%}%>
+    <%if(is_define(order_info.note)){%>
+	<ul class="aui-list aui-form-list mart05">
+		<li class="aui-list-item aui-list-item-arrow pdr03" onclick="open_w('remark_add','../html/remark_add.html',{id:<%=order_info.id%>,remark:'<%=order_info.note%>'})">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-label">备注信息</div>
+				<div class="aui-list-item-right pdr15"><%=order_info.note%></div>
+			</div>
+		</li>
+	</ul>
+	<%}else{%>
+	<ul class="aui-list aui-form-list mart05">
+		<li class="aui-list-item aui-list-item-arrow" onclick="open_w('remark_add','../html/remark_add.html',{id:<%=order_info.id%>})">
+			<div class="aui-list-item-inner">
+				<div class="aui-list-item-label">添加备注</div>
+			</div>
+		</li>
+	</ul>
+	<%}%>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	var order_id;
+	apiready = function(){
+		get_deal();
+	};
+	
+	function get_deal(orderid) {
+		if(is_define(orderid)) {
+			order_id=orderid;
+		} else {
+			order_id=api.pageParam.order_id;
+		}
+    	show_doing();
+	    request("m=Masseur&a=show_order",{values:{order_id:order_id}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		$('#deal').html(bt('deal_temp',datas));
+	    	} else {
+	    		$toast('参数错误！');
+	    	}    	
+	    	api.parseTapmode();
+   		})
+	}
+	
+	function showUpload(type,id) {
+		if(type=='projectAll') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['加项目','加产品','更换包间']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 1) {
+					open_w('project_add','../html/project_add.html',{order_id:api.pageParam.order_id})
+				} else if (ret.buttonIndex == 2) {
+					open_w('product_add','../html/product_add.html',{order_id:api.pageParam.order_id})	
+				} else if(ret.buttonIndex == 3) {
+					open_w('room_edit','../html/room_edit.html',{order_id:api.pageParam.order_id})
+				}
+			});
+		} else if(type=='projectConfirm') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['接单','加项目','加产品','更换包间']
+			}, function(ret, err) {
+				if(ret.buttonIndex == 1) {
+					confirmOrder(id);
+				} else if (ret.buttonIndex == 2) {
+					open_w('project_add','../html/project_add.html',{order_id:api.pageParam.order_id})
+				} else if (ret.buttonIndex == 3) {
+					open_w('product_add','../html/product_add.html',{order_id:api.pageParam.order_id})	
+				} else if(ret.buttonIndex == 4) {
+					open_w('room_edit','../html/room_edit.html',{order_id:api.pageParam.order_id})
+				}
+			});
+		}  else if(type=='projectConfirmed') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['接单','更换包间']
+			}, function(ret, err) {
+				if(ret.buttonIndex == 1) {
+					confirmOrder(id);
+				} else if(ret.buttonIndex == 2) {
+					open_w('room_edit','../html/room_edit.html',{order_id:api.pageParam.order_id})
+				}
+			});
+		} else if(type=='projectAlluplock') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['我要上钟','加项目','加产品','更换包间']
+			}, function(ret, err) {
+				if(ret.buttonIndex == 1) {
+					alluplock(id);
+				} else if (ret.buttonIndex == 2) {
+					open_w('project_add','../html/project_add.html',{order_id:api.pageParam.order_id})
+				} else if (ret.buttonIndex == 3) {
+					open_w('product_add','../html/product_add.html',{order_id:api.pageParam.order_id})	
+				} else if(ret.buttonIndex == 4) {
+					open_w('room_edit','../html/room_edit.html',{order_id:api.pageParam.order_id})
+				}
+			});
+		} else if(type=='projectAlluplocked') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['我要上钟','更换包间']
+			}, function(ret, err) {
+				if(ret.buttonIndex == 1) {
+					alluplock(id);
+				} else if(ret.buttonIndex == 2) {
+					open_w('room_edit','../html/room_edit.html',{order_id:api.pageParam.order_id})
+				}
+			});
+		} else if(type=='projectAlldownlock') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['我要下钟','加项目','加产品','更换包间']
+			}, function(ret, err) {
+				if(ret.buttonIndex == 1) {
+					alldownlock(id);
+				} else if (ret.buttonIndex == 2) {
+					open_w('project_add','../html/project_add.html',{order_id:api.pageParam.order_id})
+				} else if (ret.buttonIndex == 3) {
+					open_w('product_add','../html/product_add.html',{order_id:api.pageParam.order_id})	
+				} else if(ret.buttonIndex == 4) {
+					open_w('room_edit','../html/room_edit.html',{order_id:api.pageParam.order_id})
+				}
+			});
+		} else if(type=='projectAlldownlocked') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['我要下钟','更换包间']
+			}, function(ret, err) {
+				if(ret.buttonIndex == 1) {
+					alldownlock(id);
+				} else if(ret.buttonIndex == 2) {
+					open_w('room_edit','../html/room_edit.html',{order_id:api.pageParam.order_id})
+				}
+			});
+		} else if(type=='product') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['删除产品']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 1) {
+					del_product(id);
+				}
+			});
+		} else if(type=='uplock') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['上钟','删除项目']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 1) {
+					uplock(id);
+				} else if(ret.buttonIndex == 2) {
+					del_project(id)
+				}
+			});
+		} else if(type=='downlock') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['下钟']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 1) {
+					downlock(id);
+				}
+			});
+		} else if(type=='uplocknodel') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['上钟']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 1) {
+					uplock(id);
+				}
+			});
+		}
+	}
+	
+	function del_project(id) {
+    	show_doing();
+	    request("m=Masseur&a=del_project",{values:{id:id}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		$toast('项目删除成功！');
+	    		get_deal();
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    	} else {
+	    		$toast('只有一个项目，不能删除！');
+	    	}    	
+   		})
+	}
+	
+	function del_product(id) {
+    	show_doing();
+	    request("m=Masseur&a=del_product",{values:{id:id}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		$toast('产品删除成功！');
+	    		get_deal();
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    	} else {
+	    		$toast('参数错误！');
+	    	}    	
+   		})
+	}
+	
+	function uplock(id) {
+    	show_doing();
+	    request("m=Masseur&a=up_clock",{values:{id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('上钟成功！');
+	    		get_deal();
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+		    } else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function downlock(id) {
+    	show_doing();
+	    request("m=Masseur&a=down_clock",{values:{id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('下钟成功！');
+	    		get_deal();
+	    		ue_script_f("root","home","play_end()");
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    	} else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function alluplock(id) {
+    	show_doing();
+	    request("m=Masseur&a=all_up",{values:{order_id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('上钟成功！');
+	    		get_deal();
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+		    } else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function alldownlock(id) {
+    	show_doing();
+	    request("m=Masseur&a=all_down",{values:{order_id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('下钟成功！');
+	    		get_deal();
+	    		ue_script_f("root","home","play_end()");
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    	} else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function confirmOrder(id) {
+    	show_doing();
+	    request("m=Masseur&a=confirm_order",{values:{id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('接单成功！');
+	    		get_deal();
+	    		ue_script_f("root","home","play_success()");
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    		ue_script_f("root","user","user_info()");
+	    	} else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function jsGetAge(strBirthday){       
+	    var returnAge;
+	    var strBirthdayArr=strBirthday.split("-");
+	    var birthYear = strBirthdayArr[0];
+	    var birthMonth = strBirthdayArr[1];
+	    var birthDay = strBirthdayArr[2];
+	    
+	    d = new Date();
+	    var nowYear = d.getFullYear();
+	    var nowMonth = d.getMonth() + 1;
+	    var nowDay = d.getDate();
+	    
+	    if(nowYear == birthYear){
+	        returnAge = 0;//同年 则为0岁
+	    }
+	    else{
+	        var ageDiff = nowYear - birthYear ; //年之差
+	        if(ageDiff > 0){
+	            if(nowMonth == birthMonth) {
+	                var dayDiff = nowDay - birthDay;//日之差
+	                if(dayDiff < 0)
+	                {
+	                    returnAge = ageDiff - 1;
+	                }
+	                else
+	                {
+	                    returnAge = ageDiff ;
+	                }
+	            }
+	            else
+	            {
+	                var monthDiff = nowMonth - birthMonth;//月之差
+	                if(monthDiff < 0)
+	                {
+	                    returnAge = ageDiff - 1;
+	                }
+	                else
+	                {
+	                    returnAge = ageDiff ;
+	                }
+	            }
+	        }
+	        else
+	        {
+	            returnAge = -1;//返回-1 表示出生日期输入错误 晚于今天
+	        }
+	    }
+	    return returnAge;//返回周岁年龄  
+}
+</script>
+</html>

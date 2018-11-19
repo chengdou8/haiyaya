@@ -1,0 +1,123 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	</head> 
+	<body>
+		<div class="c-wh umh25 ubb pdl05 pdr03"><span class="aui-label-title ftz085">已添加标签</span></div>
+		<div class="tags_box ovd c-wh ubb" id="tag_added">
+		<script id="tag_added_temp" type="text/html">
+			<%for(var i=0;i<data.own_archives.length;i++) {%>
+			<span class="sl tag" onclick="del_tags(this)">- <%=data.own_archives[i].label%></span>
+			<%}%>
+			<span class="sl add_tag pstnr dspn" id="tag_inner">
+				<input type="text" class="ftz085" id="tag_input" placeholder="请输入擅长信息" value="" />
+				<span class="tag_sure" onclick="add_tags(this)">✔</span>
+			</span>
+			<span class="sl add_tag" id="add_tag" onclick="show_input(this)">+ 添加标签</span>
+		</script>
+		</div>
+		
+		<div class="c-wh umh25 ubb pdl05 pdr03 mart05"><span class="aui-label-title ftz085">快速选择热门标签</span></div>
+		<div class="tags_box ovd c-wh ubb" id="tag_hot">
+		<script id="tag_hot_temp" type="text/html">
+			<%for(var i=0;i<data.hot_archives.length;i++) {%>
+			<span class="sl tag" id="hot_<%=data.hot_archives[i].id%>" onclick="add_hot_tag(this)">+ <%=data.hot_archives[i].title%></span>
+			<%}%>
+		</script>
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../script/init.js"></script>
+	<script type="text/javascript" src="../script/app.js"></script>
+	<script type="text/javascript" src="../script/net.js"></script>
+	<script type="text/javascript" src="../script/self.js"></script>
+	<script type="text/javascript" src="../script/template.js"></script>
+	<script>
+	var tags = '';
+	apiready = function(){
+		get_tag_added();
+	};
+	
+	function get_tag_added() {
+		request("m=Order&a=get_archives",{values:{member_id:api.pageParam.member_id}}, function(datas, error){
+			if(datas.code==0){
+				$('#tag_added').html(bt('tag_added_temp',datas));
+				$('#tag_hot').html(bt('tag_hot_temp',datas));
+			}else{
+				$toast('出现异常，请稍候再试！');
+			}
+		});
+	}
+	
+	function show_input(obj) {
+		var item=$('#tag_added .tag');
+		if(item.length>8) {
+			$toast("最多可输入9个标签!");
+			return false;
+		}
+		$(obj).addClass('dspn');
+		$('#tag_inner').removeClass('dspn');
+		$('#tag_input').css('width','12.5em').focus();
+	}
+	
+	function add_tags(obj){
+		var tag=$('#tag_input').val();
+		if(!is_define(tag)){
+			$toast("请输入标签内容!");
+			return false;
+		}
+		$('#tag_inner').addClass('dspn');
+		$('#tag_input').removeAttr('style').val('').blur();
+		$('#add_tag').removeClass('dspn');
+		$('#tag_inner').before('<span class="sl tag" onclick="del_tags(this)">- '+tag+'</span>');
+	}
+	
+	function del_tags(obj) {
+		var tag=$(obj).html().replace("- ","");
+		$(obj).remove();
+		$('#tag_hot').append('<span class="sl tag" onclick="add_hot_tag(this)">+ '+tag+'</span>');
+	}
+	
+	function add_hot_tag(obj) {
+		var tag=$(obj).html().replace("+ ","");
+		$(obj).remove();
+		$('#tag_inner').before('<span class="sl tag" onclick="del_tags(this)">- '+tag+'</span>');
+	}
+
+	function submit(){
+		var item=$('#tag_added .tag');
+		if(!item.length>0){
+			$toast("请添加标签");
+			return false;
+		}
+		
+		item.each(function() {
+			var tag=$(this).html().replace("- ","");
+			tags=tags+','+tag;
+			
+			if (tags.substr(0,1)==',') {
+				tags=tags.substr(1);
+			}
+		})
+		
+		request("m=Order&a=add_label",{values:{member_id:api.pageParam.member_id,labels:tags}}, function(data, error){
+			if(data.code==0){
+				ue_script_f("member","member_c","get_member_deal('"+api.pageParam.member_id+"','2')");
+				setTimeout(function(){
+					close_w();
+				},1000);
+			}else{
+				$toast('出现异常，请稍候再试！');
+			}
+		});
+	}
+	</script>
+</html>

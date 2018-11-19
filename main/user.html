@@ -1,0 +1,301 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+</head>
+<body>
+	<div class="box user_header pdt05 dspn pstnr" style="background:url(../image/user_top.png) no-repeat;background-size:100%" id="exits_login">
+			<div class="ovd w8 area_auto pdt10 pdb10">
+				<div class="w50e area_auto mart10 tx-l"><img id="face" src="" class="w50e h50e uc-a" tapmode="op9" onclick="select_photo()"></div>
+				<div class="w10 pdt03 t-wh tx-c">
+					<div class="w10 umh2 ftz12" id="nickname"></div>
+					<div class="w10 umh15 ftz085">所属门店：<span id="shop_id"></span></div>
+					<div class="w10 umh15 ftz085">营业时间：<span id="workitme"></span></div>
+				</div>
+			</div>
+			<div class="ovd absb0 absl0 w10 pstna">
+                <div class="op7 pd05 ovd">
+                	<div class="ovd c-wh pdt075 pdb075">
+	                	<div class="sl w333333 tx-c ubr">
+	                		<div class="pdb03"><span class="t-444 ftz10">成功接单</span></div>
+	                		<div class="t-666"><span class="ftz11 t-3dc6b6" id="suc_order">0</span><span class="ftz07">单</span></div>
+	                	</div>
+	                	<div class="sl w333333 tx-c ubr">
+                			<div class="pdb03"><span class="t-444 ftz10">今日接单</span></div>
+                			<div class="t-666"><span class="ftz11 t-3dc6b6" id="today_order">0</span><span class="ftz07">单</span></div>
+	                	</div>
+	                	<div class="sl w333333 tx-c">
+	                		<div class="pdb03"><span class="t-444 ftz10">今日评价</span></div>
+	                		<div class="t-666"><span class="ftz11 t-3dc6b6" id="number"></span></div>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+		</div>
+		<div id="no_login" class="box user_header pdt05 dspn pstnr " style="background:url(../image/user_top.png) no-repeat;background-size:100%">
+			<div class="box umh4 pdt05 pdb10 tx-c t-wh mart15" onclick="goto_login()" tapmode="">
+				<div class="ovd w8 area_auto">
+					<div class="w50e area_auto mart10"><img tapmode="op8" src="../image/icon/default_face.png" class="w50e uc-a"></div>
+					<div class="w10 umh4 t-wh tx-c">健康师登录</div>
+				</div>
+			</div>
+			<div class="ovd absb0 absl0 w10 pstna">
+                <div class="op7 pd05 ovd">
+                	<div class="ovd c-wh pdt075 pdb075">
+	                	<div class="sl w333333 tx-c ubr">
+	                		<div class="pdb03"><span class="t-444 ftz10">成功接单</span></div>
+	                		<div class="t-666"><span class="ftz11 t-3dc6b6">0</span><span class="ftz07">单</span></div>
+	                	</div>
+	                	<div class="sl w333333 tx-c ubr">
+	                		<div class="pdb03"><span class="t-444 ftz10">今日接单</span></div>
+                			<div class="t-666"><span class="ftz11 t-3dc6b6">0</span><span class="ftz07">单</span></div>
+	                	</div>
+	                	<div class="sl w333333 tx-c">
+	                		<div class="pdb03"><span class="t-444 ftz10">今日评价</span></div>
+	                		<div class="t-666"><span class="ftz11 t-3dc6b6">0</span></div>
+	                	</div>
+	                </div>
+                </div>
+            </div>
+		</div>
+		
+		<div class="marl05 marr05 user_list">
+			<ul class="aui-list aui-list-in aui-list-noborder">
+				<li class="aui-list-item" tapmode="op8" onclick="is_login(function(){open_w('make_point','../user/make_point.html')})">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/yuyue.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">我的预约</div>
+		            </div>
+				</li>
+				<li class="aui-list-item" tapmode="op8">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/pingjia.png" class="w135e" /></div>
+					<div class="aui-list-item-inner">
+		                 <div class="aui-list-item-title">我的评价</div>
+		                 <div class="aui-list-item-middel t-939393 ftz07" id="score">评价总分：0</div>
+		                 <div class="aui-list-item-right t-939393 ftz07" id="rate">评价率：0</div>
+		            </div>
+				</li>
+				<li class="aui-list-item" tapmode="op8" onclick="is_login(function(){open_w('scheduling','../user/scheduling.html')})">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/paiban.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">我的排班</div>
+		            </div>
+				</li>
+				<li class="aui-list-item" tapmode="op8" onclick="is_login(function(){open_w('bells','../user/bells.html')})">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/paizhong.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">我的排钟</div>
+		            </div>
+				</li>
+				<li class="aui-list-item" tapmode="op8" onclick="is_login(function(){open_w('leave','../user/leave.html')})">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/qingjia.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">我的请假</div>
+		            </div>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="marl05 marr05 mart05 user_list">
+			<ul class="aui-list aui-list-in aui-list-noborder">
+				<li class="aui-list-item" tapmode="op8" onclick="is_login(function(){open_w('achievement','../user/achievement.html')})">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/yeji.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">我的业绩</div>
+		            </div>
+				</li>
+				<li class="aui-list-item" tapmode="op8" onclick="is_login(function(){open_w('ranking','../user/ranking.html')})">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/paiming.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">健康师排名</div>
+		            </div>
+				</li>
+			</ul>
+		</div>
+		
+		<div class="marl05 marr05 mart05 user_list">
+			<ul class="aui-list aui-list-in">
+				<li class="aui-list-item" tapmode="op8" onclick="go_to_set()">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/person.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">个人信息</div>
+		            </div>
+				</li>
+				<a id="tel" href="">
+				<li class="aui-list-item">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/contact.png" class="w135e" /></div>
+					<div class="aui-list-item-inner">
+		                 <div class="aui-list-item-title">联系我们</div>
+		                 <div class="aui-list-item-right" id="telphone"></div>
+		            </div>
+				</li>
+				</a>
+				<li class="aui-list-item dspn" tapmode="op8" onclick="login_out()" id="exit_login">
+					<div class="aui-list-item-label-icon"><img src="../image/icon/quit.png" class="w135e" /></div>
+					<div class="aui-list-item-inner aui-list-item-arrow">
+		                 <div class="aui-list-item-title">安全退出</div>
+		            </div>
+				</li>
+			</ul>
+		</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript">
+	var user_face;
+	apiready = function(){
+		user_info();
+	};
+	
+	function user_info(){
+		var token = get_local('openid');
+		if(is_define(token)){
+			$("#exit_login").removeClass("dspn");
+		}
+		if(is_define(token)){
+			show_doing();
+			request("m=Order&a=person_info",{values:{}}, function(data,error){
+	   			hide_doing();
+		    	if(data.code==0){
+					$("#exits_login").removeClass("dspn");
+					$("#no_login").addClass("dspn");
+					if(is_define(data.info.cover)) {
+						user_face=data.info.cover;
+					} else {
+						user_face='../image/head_1.jpg';
+					}
+					$("#face").attr('src',user_face);
+					$("#nickname").text(data.info.nick_name);
+					$("#shop_id").text(data.info.stores);
+					$("#workitme").text(data.info.business_time);
+					$("#suc_order").text(data.info.success_order);
+					$("#today_order").text(data.info.today_order);
+					$("#number").text(data.info.today_evaluation);
+					$("#score").text("评价总分："+data.info.evaluation_score);
+					$("#rate").text("评价率："+data.info.evaluation_rate);
+					$('#tel').attr('href','tel:'+data.info.mobile.replace("-",""));
+					$('#telphone').text(data.info.mobile);
+		    	} else {
+			    	$toast(data.msg);
+			    }
+	   		})
+		}else{
+			$("#no_login").removeClass("dspn");
+			$("#exits_login").addClass("dspn");			
+		}
+	}
+	
+	function go_to_set(){
+		is_login(function(){open_w('set','../user/set.html',{face:user_face})});
+	}
+	
+	function login_out(){
+		var token=get_local('openid');
+		var dialogBox = api.require('dialogBox');
+			dialogBox.alert({
+			    texts: {
+			    	title: '提示信息',
+			        content: '您确定要退出吗？',
+			        leftBtnTitle: '取消',
+			        rightBtnTitle: '确认'
+			    },
+			    styles: {
+			        bg: '#fff',
+			        corner:5,
+			        w: 300,
+			        title: {
+			            marginT: 20,
+			            icon: 'widget://image/cry.gif',
+			            iconSize: 40,
+			            titleSize: 14,
+			            titleColor: '#000'
+			        },
+			        content: {
+			            color: '#000',
+			            size: 14
+			        },
+			        left: {
+			            marginB: 7,
+			            marginL: 20,
+			            w: 130,
+			            h: 35,
+			            corner: 2,
+			            bg: '#e4e4e4',
+			            color:'#666666',
+			            size: 12
+			        },
+			        right: {
+			            marginB: 7,
+			            marginL: 10,
+			            w: 130,
+			            h: 35,
+			            corner: 2,
+			            bg: '#3dc6b6',
+			            color:'#ffffff',
+			            size: 12
+			        }
+			    },
+			    tapClose:true
+			}, function(ret) {
+			    if (ret.eventType == 'left') {
+			        dialogBox.close({
+			            dialogName: 'alert'
+			        });
+			    }
+			    if (ret.eventType == 'right') {
+				    show_doing();
+				    request("m=Login&a=logout",{values:{}}, function(data, error){
+				    	hide_doing();
+				    	if(data.code==0){
+	    					set_local("openid","");
+							ue_script_f("root","user","user_info()");							
+							ue_script_f("root","home","get_order()");
+			    			dialogBox.close({
+					            dialogName: 'alert'
+					        });							
+							api.rebootApp();		 			
+				    	}else{
+				    		$toast(data.error);
+				    	}
+				    });	
+			    }
+			});			
+	}
+	
+	function select_photo() {
+		api.getPicture({
+			sourceType : 'library',
+			encodingType : 'jpg',
+			mediaValue : 'pic',
+			destinationType : 'url',
+			allowEdit : true,
+			quality : 100,
+			targetWidth : 200,
+			targetHeight : 200,
+			saveToPhotoAlbum : false
+		},function(ret,err){
+			if(ret) {
+				show_doing();
+			    request("m=Order&a=post_cover",{values:{},files:{pic:ret.data}}, function(data,error){
+		   			hide_doing();
+			    	if(data.code==0){
+			    		$toast('图片上传成功！');
+			    		user_info();
+			    	} else {
+				    	$toast('图片上传失败！');
+			    	}
+		   		})
+			}
+		})
+	}
+</script>
+</html>

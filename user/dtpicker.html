@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+	</head>
+<body>
+	<div class="fix" tapmode onclick="close_f('mask')"></div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/mui.min.js"></script>
+<script type="text/javascript" src="../script/mui.picker.min.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+
+	};
+	
+	function dtpicker(obj) {
+        mui.init();
+        var _self = $(obj);
+        if(_self.picker) {
+          _self.picker.show(function (rs) {
+            $(obj).val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        } else {
+          var optionsJson = $(obj).attr('data-options') || '{}';
+          var options = JSON.parse(optionsJson);
+          _self.picker = new mui.DtPicker(options);
+          _self.picker.show(function (rs) {
+            $(obj).val(rs.text);
+            _self.picker.dispose();
+            _self.picker = null;
+          });
+        }
+     };
+</script>
+</html>

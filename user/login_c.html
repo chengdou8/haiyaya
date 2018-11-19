@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <style>
+          .loginbox{padding:15px 18px;}
+   		  .loginMod{
+            background: #ffffff;
+            width: 100%;
+          }
+          .loginMod li{
+            box-sizing: border-box;
+            padding: 8px 6px;
+            height: 45px;
+            background-color: #ffffff;
+            border-bottom: solid 0.5px #eeeeee;
+          }
+        .login_icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: text-bottom;
+            margin-left: 13px;
+        }
+
+        .number {
+            background: url(../image/login_icon01.png);
+            background-size: 100%;
+        }
+
+        .photo {
+            background: url(../image/login_icon02.png);
+            background-size: 100%;
+        }
+
+        .code {
+            background: url(../image/login_icon03.png);
+            background-size: 100%;
+        }
+
+        .password {
+            background: url(../image/login_icon04.png);
+            background-size: 100%;
+        }
+
+        .item_input {
+            display: inline-block;
+            height: 30px;
+            line-height: 30px;
+            font-size: 14px;
+            margin-left: 18px;
+            width: 195px;
+        }
+
+        .item_input input {
+            height: 30px;
+            width: 100%;
+            outline: none;
+        }
+
+        .forget {
+            font-family: MicrosoftYaHei;
+            font-size: 13px;
+            color: #3dc6b6;
+            text-align: center;
+            display: inline-block;
+        }
+        .login_btn{
+          width: 100%;
+          height: 45px;
+          background-color: #ffbf61;
+          border-radius: 5px;
+          color: #ffffff;
+          font-size: 18px;
+          text-align: center;
+          line-height: 45px;
+          margin-top: 24px;
+          margin-bottom: 19px;
+        }
+        .protocol{
+          text-align: center;
+          font-size: 13px;
+          color: #999999;
+        }
+        .protocol span{
+          color: #3dc6b6;
+        }
+    </style>
+</head>
+
+<body>
+<div id="banner"><img src="../image/banner.jpg" alt=""></div>
+<div class="loginbox">
+    <section class="loginMod">
+        <ul>
+            <li>
+                <i class="login_icon photo"></i>
+                <div class="item_input">
+                    <input type="number" pattern="[0-9]*" placeholder="请输入手机号码（11位）" id="mobile">
+                </div>
+            </li>
+            <li>
+                <i class="login_icon password"></i>
+                <div class="item_input">
+                    <input type="password" pattern="[0-9]*" placeholder="请输入密码（6-20位）" id="password">
+                </div>
+                <!--<div class="forget" onclick="open_w('forget_pwd','../user/forget_pwd.html')">忘记密码</div>-->
+            </li>
+        </ul>
+    </section>
+	<section>
+		<div class="login_btn" tapmode onclick="logion()">登录</div>
+		<P class="protocol">登录即代表您已同意<span>《嗨丫丫门店协议》</span></P>
+	</section>
+</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/sdk_jpush.js"></script>
+<script type="text/javascript">
+    apiready = function() {
+      api.parseTapmode();
+    };
+
+    function logion(){
+		var tokenModel = new Token();
+		var mobile = $('#mobile').val();
+		var password = $('#password').val();
+	    if (!is_define(mobile)){
+	        $toast("请输入手机号码");
+	        return false;
+	    }
+	    if(!is_mobile(mobile)){
+	        $toast("手机号码不正确");
+	        return false;
+	    }
+	    if (!is_define(password)){
+	        $toast("请输入密码");
+	        return false;
+	    }
+	    show_doing();
+	    request("m=Login&a=index",{values:{account:mobile,password:password}}, function(data, error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		set_local("openid",data.data.token);
+	    		set_local("truename",data.data.masseur_name);
+	    		set_local("mobile",data.data.tel);
+	    		set_local("chain_id",data.data.chain_id);
+	    		set_local("shop_id",data.data.shop_id);
+	    		set_local("masseur_sn",data.data.masseur_sn);
+	    		ue_script_f("root","home","get_home_deal()");
+	    		ue_script_f("root","order","get_orderList('first')");
+	    		ue_script_f("root","order","get_his_orderList('first')");
+	    		ue_script_f("root","user","user_info()");
+	    		sdk_j_init();
+	    		setTimeout(function(){ue_script("login","close_w()");},1000);
+	    	}else {
+	    		$toast(data.msg);
+	    	}
+   		})
+   }
+</script>
+
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/css.css" />
+</head>
+<body>
+	<div id="rili">
+		<div id='calendar'></div>
+	</div>
+	
+	<div class="w10 h05e c-f7f7f7"></div>
+	<div class="c-wh ftz08 t-666 pd10 ovd">
+		<div class="sl umh175 w333333"><span class="c_block c-3dc6b6 sl"></span><span id="morning_shift">早班：0天</span></div>
+		<div class="sl umh175 w333333"><span class="c_block c-fad33d sl"></span><span id="middle_shift">中班：0天</span></div>
+		<div class="sl umh175 w333333"><span class="c_block c-59c37f sl"></span><span id="night_shift">晚班：0天</span></div>
+		<div class="sl umh175 w333333"><span class="c_block c-fd363b sl"></span><span id="leave">请假：0天</span></div>
+		<div class="sl umh175 w333333"><span class="c_block c-82f7fc sl"></span><span id="rest">休息：0天</span></div>
+		<div class="sl umh175 w333333"><span class="c_block c-bababa sl"></span><span id="class">其它：0天</span></div>
+	</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="../script/scheduling.js"></script>
+<script type="text/javascript">
+	apiready = function(){
+		get_scheduling();
+	};
+	
+	function get_scheduling(date) {
+    	show_doing();
+	    request("m=Work&a=index",{values:{date:date}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		$('#morning_shift').text('早班：'+datas.count.moring+'天');
+	    		$('#middle_shift').text('中班：'+datas.count.afternoon+'天');
+	    		$('#night_shift').text('晚班：'+datas.count.night+'天');
+	    		$('#leave').text('请假：'+datas.count.leave+'天');
+	    		$('#rest').text('休息：'+datas.count.workoff+'天');
+	    		for(var i=0; i<datas.data.length; i++) {
+	    			var day = parseInt(datas.data[i].d);
+	    			var status = datas.data[i].status;
+	    			var item = $('.c-day');
+	    			item.each(function() {
+	    				var value = parseInt($(this).text());
+	    				if(value==day) {
+	    					if(status=='早班') {
+	    						$(this).addClass('c-3dc6b6 t-wh');
+	    					} else if(status=='中班') {
+	    						$(this).addClass('c-fad33d t-wh');
+	    					} else if(status=='晚班') {
+	    						$(this).addClass('c-59c37f t-wh');
+	    					} else if(status=='请假'||status=='事假'||status=='病假') {
+	    						$(this).addClass('c-fd363b t-wh');
+	    					} else if(status=='休假'||status=='工休') {
+	    						$(this).addClass('c-82f7fc t-wh');
+	    					} else {
+	    						$(this).addClass('c-bababa t-wh');
+	    					}
+	    				}
+	    			})
+	    		}
+	    	}
+   		})
+	}
+</script>
+</html>

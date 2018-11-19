@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="format-detection" content="telephone=no"/>
+        <title>RAF</title>
+        <!-- 基础样式及JS -->
+        <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	</head> 
+<body class="model_shade">
+	<div id="push_order"></div>
+	<script id="push_order_temp" type="text/html">
+	<div class="hyy_model w10">
+		<div class="hyy_model_top t-wh tx-c">
+			<span class="model_close" onclick="close_f('mask')">×</span>
+			<div class="ftz18">派单</div>
+			<div class="ftz12" id="order_time"></div>
+			<div class="ftz085 t-dadada tx-c">来源：<%=info.from%></div>
+		</div>
+		<div class="hyy_model_content w55 area_auto">
+			<div class="pstnr pdl10 marb10">
+			  <span class="mot cyan"></span>
+			  <div class="pdb03 ftz11 t-wh line10">服务项目：<%=info.title%></div>
+		    </div>
+		    
+		    <div class="pstnr pdl10 marb10">
+		      <span class="mot ondine"></span>
+			  <div class="pdb03 ftz11 t-wh line10">上钟方式：<span id="types"></span></div>
+		    </div>
+		    
+		    <div class="pstnr pdl10">
+		      <span class="mot orange"></span>
+			  <div class="pdb03 ftz11 t-wh line10">包间名称：<%=info.room_name%></div>
+		    </div>
+		</div>
+	</div>
+	<div class="hyy_model_foot">
+		<div class="aui-btn aui-btn-block aui-btn-warning" onclick="receipt()">
+			<div class="ftz10 pdt04">接单</div>
+			<div class="ftz075" id="timeout"><span class="minutes">05</span>:<span class="seconds">00</span></div>
+		</div>
+	</div>
+	</script>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	var countTimes;
+	apiready = function(){
+		get_push_order();
+	};
+	
+	function get_push_order() {
+    	show_doing();
+	    request("m=Order&a=push_order",{values:{order_id:api.pageParam.id}}, function(datas,error){
+   			hide_doing();
+   			if(datas.code==0){
+	   			$('#push_order').html(bt('push_order_temp',datas));
+	   			timeout(300);
+	   			var myDate = new Date();
+	   			var year = myDate.getFullYear();
+	   			var month = myDate.getMonth()+1;
+	   			var day = myDate.getDate();
+	   			var today = year+'-'+p(month)+'-'+p(day);
+				var date = datas.info.createtime.substring(0, 10);
+				var dates = datas.info.createtime.substring(5, 16)
+				var times = datas.info.createtime.substring(11, 16);
+				if(today==date) {
+					$('#order_time').html('<span class="ftz085">今天：</span>'+times);
+				} else {
+					$('#order_time').html(dates);
+				}
+				if(datas.info.types==1) {
+					$('#types').html('轮钟')
+				} else if(datas.info.types==2) {
+					$('#types').html('点钟')
+				} else if(datas.info.types==3) {
+					$('#types').html('加钟')
+				}
+	    	} else {
+	    		$toast('网络出问题啦，请稍后再试！');
+	    	}  
+			
+   		})
+    }
+    
+    function p(s) {
+	    return s < 10 ? '0' + s: s;
+	}
+	
+	function timeout(times){
+		if(times>0) {
+			countTimes = setInterval(function() {
+				times = --times < 0 ? 0 : times;
+				var min = Math.floor(times/60).toString();			
+				var hm = Math.floor(times)-min*60;
+				$('#timeout .minutes').html(p(min));
+				$('#timeout .seconds').html(p(hm));
+				if(times == 0) {
+					clearInterval(countTimes);
+					close_f('mask');
+				}
+			},1000);
+		} else {
+			clearInterval(countTimes);
+			close_f('mask');
+		}
+	}
+	
+	function receipt() {
+		var netAudio = api.require("netAudio");
+		show_doing();
+	    request("m=Masseur&a=confirm_order",{values:{id:api.pageParam.id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		ue_script_f("root","home","play_success()");
+		        ue_script_f("root","home","get_home_deal()");
+				ue_script_f("root","order","get_orderList('first')");
+				ue_script_f("root","user","user_info()");
+				close_f('mask');
+	    	} else {
+	    		$toast(data.msg)
+	    	}
+   		})
+	}
+</script>
+</html>

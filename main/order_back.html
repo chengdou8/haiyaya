@@ -1,0 +1,340 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+</head>
+<body>
+	<div class="w10 tx-c dspn" style="height:143px; padding-top:15px;" id="null">		
+		<div class="w25 area_auto">
+			<img src="../image/icon/null.png" class="w10" />
+		</div>
+		<div class="h10e"></div>
+		<div class="ftz09 t-999">暂无订单</div>
+	</div>
+    <div rel="orderlist" class="c-wh" id="cur_orderlist"></div>
+    <script id="order_temp" type="text/html">
+		<%for(var i=0; i<data.length;i++){%>
+		<div class="ovd pdl05 pdr05 ubt8" tapmode="c-f7f7f7">
+			<div onclick="open_w('order_deal','../user/order_deal.html',{order_id:<%=data[i].order_id%>})">
+				<div class="ovd ubb umh2 ub-e4e4e4 pdt03 pdb03 ftz095">
+					<img src="../image/icon/icon_openorder.png" class="fl w10e pdt015 mart03" />
+					<span class="fl pdl05 t-333">前台开单</span>
+					<span class="pdl07 marl05 ubl ub-e4e4e4 t-999 ftz085"><%=data[i].createtime%></span>
+					<span class="fr t-333"><%=data[i].room_name%></span>
+				</div>
+				<div class="ovd ubb ub-e4e4e4 pdt05 pdb05">
+					<div class="fl avatar"><img src="../image/icon/zl.png" class="w80" /></div>
+					<div class="umh3 fl pdl08 ftz10"><%=data[i].item_name%></div>
+					<div class="umh3 fr ftz08 t-939393 pdt04">¥<%=data[i].item_price%>/<%=data[i].item_duration%>分钟</div>
+				</div>
+			</div>
+			<%if(data[i].is_confirm==0){%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown_<%=data[i].id%>" class="ftz085 pdt025 t-666 timer">尚未接单</div>
+					<input type="button" class="aui-btn aui-btn-warning" data-status="<%=data[i].status%>" data-time="<%=data[i].item_duration%>" data-id="<%=data[i].order_id%>" data-confirm="<%=data[i].is_confirm%>" onclick="service(this)" value="接单" />
+				</div>
+			<%}else{%>
+				<%if(data[i].status==1){%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown_<%=data[i].id%>" class="ftz085 pdt025 t-666 timer">待上钟</div>
+					<input type="button" class="aui-btn aui-btn-primary" data-status="<%=data[i].status%>" data-time="<%=data[i].item_duration%>" data-id="<%=data[i].id%>" onclick="service(this)" value="上钟" />
+				</div>
+				<%}else if(data[i].status==2){%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown_<%=data[i].id%>" class="ftz085 pdt025 t-666 timer">待下钟</div>
+					<input type="button" class="aui-btn aui-btn-danger" data-status="<%=data[i].status%>" data-time="<%=data[i].item_duration%>" data-id="<%=data[i].id%>" onclick="service(this)" value="下钟" />
+				</div>
+				<%}else if(data[i].status==3){%>
+				<div class="flex_between pdt05 pdb05">
+					<div id="countdown_<%=data[i].id%>" class="ftz085 pdt025 t-666 timer">服务已结束</div>
+					<input type="button" class="aui-btn aui-btn-default" data-status="<%=data[i].status%>" data-time="<%=data[i].item_duration%>" data-id="<%=data[i].id%>" onclick="service(this)" value="已下钟" />
+				</div>
+				<%}%>
+			<%}%>
+		</div>
+		<%}%>
+	</script>
+	
+	<div rel="orderlist" class="c-wh dspn" id="history_orderlist"></div>
+    <script id="his_order_temp" type="text/html">
+		<%for(var i=0; i<data.length;i++){%>
+		<div class="ovd pdl05 pdr05 ubt8" tapmode="c-f7f7f7" onclick="open_w('order_deal','../user/order_deal.html',{order_id:<%=data[i].order_id%>})">
+			<div class="ovd ubb umh2 ub-e4e4e4 pdt03 pdb03 ftz095">
+				<img src="../image/icon/icon_openorder.png" class="fl w10e pdt015 mart03" />
+				<span class="fl pdl05 t-333">前台开单</span>
+				<span class="pdl07 marl05 ubl ub-e4e4e4 t-999 ftz085"><%=data[i].createtime%></span>
+				<span class="fr t-333"><%=data[i].room_name%></span>
+			</div>
+			<div class="ovd ubb ub-e4e4e4 pdt05 pdb05">
+				<div class="fl avatar"><img src="../image/icon/zl.png" class="w80" /></div>
+				<div class="umh3 fl pdl08 ftz10"><%=data[i].item_name%></div>
+				<div class="umh3 fr ftz08 t-939393 pdt04">¥<%=data[i].item_price%>/<%=data[i].item_duration%>分钟</div>
+			</div>
+			<%if(data[i].status==4){%>
+			<div class="flex_between pdt05 pdb05">
+				<div id="countdown_<%=data[i].id%>" class="ftz085 pdt025 t-666 timer">服务已完成</div>
+				<input type="button" class="aui-btn aui-btn-default" data-status="<%=data[i].status%>" data-time="<%=data[i].item_duration%>" data-id="<%=data[i].id%>" onclick="service(this)" value="已完成" />
+			</div>
+			<%}else if(data[i].status==5){%>
+			<div class="flex_between pdt05 pdb05">
+				<div id="countdown_<%=data[i].id%>" class="ftz085 pdt025 t-666 timer">服务已取消</div>
+				<input type="button" class="aui-btn aui-btn-default" data-status="<%=data[i].status%>" data-time="<%=data[i].item_duration%>" data-id="<%=data[i].id%>" onclick="service(this)" value="已取消" />
+			</div>
+			<%}%>
+		</div>
+		<%}%>
+	</script>
+	
+	<input type="hidden" id="page" value="1"/>
+	<input type="hidden" id="datapage" value="1"/>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	var countTimes;
+	var countTime;
+	apiready = function(){
+		get_orderList('first');
+		push_down_motive(function(){
+			get_orderList('first');
+		});
+		push_up(function(){
+			get_orderList('next');
+		});
+		
+		get_his_orderList('first');
+		push_down_motive(function(){
+			get_his_orderList('first');
+		});
+		push_up(function(){
+			get_his_orderList('next');
+		});
+	};
+	
+	function service(obj) {
+		var token = get_local('openid');
+    	var value = $(obj).val();
+    	var id = $(obj).attr('data-id');
+    	var times = $(obj).attr('data-time');
+    	var status = $(obj).attr('data-status');
+    	var confirm = $(obj).attr('data-confirm');
+    	if(confirm==0) {
+    		show_doing();
+		    request("m=Masseur&a=confirm_order",{values:{token:token,id:id}}, function(data,error){
+	   			hide_doing();
+		    	if(data.code==0){
+		    		$toast('接单成功！');
+		    		get_orderList('first');
+		    		ue_script_f('root','home','get_order()');
+		    	} else {
+			    	$toast(data.msg);
+			    }
+	   		})
+    	} else {
+	    	if(status==1) {
+		    	show_doing();
+			    request("m=Masseur&a=up_clock",{values:{token:token,id:id}}, function(data,error){
+		   			hide_doing();
+			    	if(data.code==0){
+						get_orderList('first');
+						ue_script_f('root','home','get_order()');
+			    	} else {
+			    		$toast(data.msg);
+			    	}
+		   		})
+	    	} else if(status==2) {
+		    	show_doing();
+			    request("m=Masseur&a=down_clock",{values:{token:token,id:id}}, function(data,error){
+		   			hide_doing();
+			    	if(data.code==0){
+			    		get_orderList('first');
+			    		ue_script_f('root','home','get_order()');
+			    	} else {
+			    		$toast(data.msg);
+			    	}
+		   		})
+	    	} else if(status==3) {
+	    		$toast('服务已下钟')
+	    	} else if(status==4) {
+	    		$toast('服务已完成')
+	    	} else {
+	    		$toast('服务已取消')
+	    	}
+	    }
+    }
+	
+	function timeout(times,id){
+		if(times>0) {
+			countTimes = setInterval(function() {
+				times = --times < 0 ? 0 : times;
+				var min = Math.floor(times/60).toString();
+				if(min.length <= 1) {
+					min = "0" + min;
+				}			
+				var hm = Math.floor(times)-min*60;
+				if(hm.length <= 1) {
+					hm = "0" + hm;
+				}
+				$('#countdown_'+id).find('.minutes').html(min+'分钟');
+				$('#countdown_'+id).find('.seconds').html(hm+'秒');
+			},1000);
+		} else {
+			clearInterval(countTimes);
+			$('#countdown').html('该服务已结束');
+		}
+	}
+	
+	function timein(time,id){
+		countTime = setInterval(function() {
+			time = ++time < 0 ? 0 : time;
+			var hour = Math.floor(time/3600).toString();
+			var min = Math.floor(time/60-hour*60).toString();
+			var hm = Math.floor(time)-hour*3600-min*60;
+			$('#countdown_'+id).html(hour+'小时');
+			$('#countdown_'+id).find('.minutes').html(min+'分钟');
+			$('#countdown_'+id).find('.seconds').html(hm+'秒');
+		},1000);
+	}
+	
+	function change_index(value){
+		index=value;
+		page=1;
+		change_content();
+		ue_script("index","change_value('"+value+"')")
+	}
+	
+	function change_content(){
+		$("div[rel=orderlist]").addClass("dspn");
+		if(index==0){
+			$("div[rel=orderlist]").eq(0).removeClass("dspn");
+			get_orderList('first');
+		} else if(index==1){
+			$("div[rel=orderlist]").eq(1).removeClass("dspn");
+			get_his_orderList('first');
+		}
+		push_down_over();
+	}
+	
+	function get_orderList(type) {
+		if(type=='first'){
+		   $("#page").val('1');  
+		}
+		if(type=='next'){
+		   var page = $("#page").val();
+		   page = parseInt(page) + 1;
+		   $api.val($api.byId("page"), page);
+		   var datapage = $("#datapage").val();
+		   if(0==datapage){
+		   	   push_up_over();
+		   	   return false;
+		   }
+		}
+		var token = get_local('openid');
+    	show_doing();
+	    request("m=Masseur&a=lists",{values:{token:token,pagecur:$('#page').val(),pagesize:10,is_history:0}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		var cur_num = datas.data.length;
+	    		if(type=='first') {
+					if(cur_num>0) {
+						$('#cur_orderlist').html(bt('order_temp',datas));
+					} else {
+						$('#cur_orderlist').html(no_data);
+					}	
+				} else {
+					if(cur_num>0) {
+						$('#cur_orderlist').append(bt('order_temp',datas));
+					}
+				}
+				
+//				for(var i=0; i<datas.data.length;i++) {
+//					var countdown = datas.data[i].countdown;
+//					var difference_time=datas.data[i].difference_time;
+//					if(datas.data[i].is_confirm==1&&datas.data[i].status==1) {
+//						var hour = Math.floor(difference_time/3600).toString();
+//						var min = Math.floor(difference_time/60-hour*60).toString();
+//						var hm = Math.floor(difference_time)-hour*3600-min*60;
+//						$('#countdown_'+datas.data[i].id).html('接单：'+'<span class="hour t-e51c23">'+hour+'小时</span>'+'<span class="minutes t-e51c23">'+min+'分钟</span>'+'<span class="seconds t-e51c23">'+hm+'秒</span>');
+//						timein(difference_time,datas.data[i].id);
+//					}
+//					
+//					if(datas.data[i].status==2) {
+//						clearInterval(difference_time);
+//						if(countdown>0) {
+//							var min = Math.floor(countdown/60).toString();
+//							var hm = Math.floor(countdown)-min*60;
+//							$('#countdown_'+datas.data[i].id).html('服务倒计时：'+'<span class="minutes t-e51c23">'+min+'分钟</span>'+'<span class="seconds t-e51c23">'+hm+'秒</span>');
+//				    		timeout(countdown,datas.data[i].id);
+//				    	} else {
+//				    		$('#countdown_'+datas.data[i].id).html('服务已超时');
+//				    	}
+//					} else if(datas.data[i].status==3) {
+//						clearInterval(countTimes);
+//					}
+//				}
+				
+				ue_script("root","give_curnum('"+datas.count+"')");
+				Echo.init({offset: 0,throttle:0});
+				api.parseTapmode();
+				push_down_over();			
+				push_up_over();
+	    	} else {
+		    	$("#null").removeClass("dspn");
+	    	}
+   		})
+	}
+	
+	function get_his_orderList(type) {
+		if(type=='first'){
+		   $("#page").val('1');  
+		}
+		if(type=='next'){
+		   var page = $("#page").val();
+		   page = parseInt(page) + 1;
+		   $api.val($api.byId("page"), page);
+		   var datapage = $("#datapage").val();
+		   if(0==datapage){
+		   	   push_up_over();
+		   	   return false;
+		   }
+		}
+		var token = get_local('openid');
+    	show_doing();
+	    request("m=Masseur&a=lists",{values:{token:token,pagecur:$('#page').val(),pagesize:10,is_history:1}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		var cur_num = datas.data.length;
+	    		if(type=='first') {
+					if(cur_num>0) {
+						$('#history_orderlist').html(bt('his_order_temp',datas));
+					} else {
+						$('#history_orderlist').html(no_data);
+					}	
+				} else {
+					if(cur_num>0) {
+						$('#history_orderlist').append(bt('his_order_temp',datas));
+					}
+				}
+      			ue_script("root","give_hisnum('"+datas.count+"')")
+				Echo.init({offset: 0,throttle:0});
+				api.parseTapmode();
+				push_down_over();			
+				push_up_over();
+	    	} else {
+		    	$("#null").removeClass("dspn");
+	    	}
+   		})
+	}
+</script>
+</html>

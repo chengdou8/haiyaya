@@ -1,0 +1,173 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	</head>
+	<body class="c-wh">
+		<div class="box ubt ub-e4e4e4 t-333">
+			<div class="ovd pd05" tapmode="c-f1f1f1" onclick="select_photo()">
+				<div class="sl pdl5 w40e">
+					<div class="w40e area_auto" tapmode="op9"><img id="face" src="../image/head_1.jpg" class="w40e h40e uc-a"></div>
+				</div>
+				<div class="sr umh15 pdt10 mart02"><img src="../image/right_gra.png" class="w15e"></div>
+			</div>
+		</div>
+		<div class="box ubt ub-e4e4e4 t-333">
+			<div class="ovd pd05 ubb ub-e4e4e4" tapmode="c-f1f1f1" onclick="open_w('about','about.html')">
+				<div class="sl umh2">关于我们</div>
+				<div class="sr umh15 pdt025 pdb025"><img src="../image/right_gra.png" class="w15e"></div>
+			</div>
+		</div>
+		<div class="box t-333">
+			<div class="ovd pd05 ubb ub-e4e4e4" tapmode="c-f1f1f1" onclick="open_w('advice','advice.html')">
+				<span class="sl umh2">意见反馈</span>
+				<span class="sr umh15 pdt025 pdb025"><img src="../image/right_gra.png" class="w15e"></span>
+			</div>
+		</div>
+		<p id="change_push" class="ovd pd05 ubb ub-e4e4e4">
+			<span class="sl umh2">推送</span>
+			<span class="sr umh2">
+				<input id="send" class="switch switch-anim" type="checkbox" onclick="send_open()">
+			</span>
+		</p>
+		<div class="w10 h05e c-f7f7f7"></div>
+		<div class="box w10 dspn" id="exit_login">
+            <div class="w9 area_auto mart10 c-f09928 uc-a03" tapmode="op8" onclick="login_out()">
+                <div class="w10 tx-c t-wh umh3">退出登录</div>
+            </div>
+        </div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../script/init.js"></script>
+	<script type="text/javascript" src="../script/self.js"></script>
+	<script type="text/javascript" src="../script/app.js"></script>
+	<script type="text/javascript" src="../script/net.js"></script>
+	<script>
+	apiready = function(){
+		if(is_define(get_local("openid"))){
+			$("#exit_login").removeClass("dspn");
+			$('#face').attr('src',api.pageParam.face);
+		}
+		var send_type=get_local('send_type');
+		if(is_define(send_type)){
+			if(send_type=='true'){		
+				$(".switch-anim").prop("checked",true);
+			}else{
+				$(".switch-anim").prop("checked",false);
+			}			
+		}
+	};
+
+	function login_out(){
+		var dialogBox = api.require('dialogBox');
+			dialogBox.alert({
+			    texts: {
+			    	title: '提示信息',
+			        content: '您确定要退出吗？',
+			        leftBtnTitle: '取消',
+			        rightBtnTitle: '确认'
+			    },
+			    styles: {
+			        bg: '#fff',
+			        corner:5,
+			        w: 300,
+			        title: {
+			            marginT: 20,
+			            icon: 'widget://image/cry.gif',
+			            iconSize: 40,
+			            titleSize: 14,
+			            titleColor: '#000'
+			        },
+			        content: {
+			            color: '#000',
+			            size: 14
+			        },
+			        left: {
+			            marginB: 7,
+			            marginL: 20,
+			            w: 130,
+			            h: 35,
+			            corner: 2,
+			            bg: '#e4e4e4',
+			            color:'#666666',
+			            size: 12
+			        },
+			        right: {
+			            marginB: 7,
+			            marginL: 10,
+			            w: 130,
+			            h: 35,
+			            corner: 2,
+			            bg: '#fa2e2f',
+			            color:'#ffffff',
+			            size: 12
+			        }
+			    },
+			    tapClose:true
+			}, function(ret) {
+			    if (ret.eventType == 'left') {
+			        dialogBox.close({
+			            dialogName: 'alert'
+			        });
+			    }
+			    if (ret.eventType == 'right') {
+				    show_doing();
+				    request("m=Login&a=logout",{values:{}}, function(data, error){
+				    	hide_doing();
+				    	if(data.code==0){
+	    					set_local("openid","");
+							ue_script_f("root","user","user_info()");							
+							ue_script_f("root","home","get_order()");
+			    			dialogBox.close({
+					            dialogName: 'alert'
+					        });							
+							api.rebootApp();		 			
+				    	}else{
+				    		$toast(data.error);
+				    	}
+				    });	
+			    }
+			});			
+	}
+	function send_open(){
+		var send_type=$('#send').attr('checked');
+		set_local('send_type',send_type);
+	}
+	
+	function select_photo() {
+		api.getPicture({
+			sourceType : 'library',
+			encodingType : 'jpg',
+			mediaValue : 'pic',
+			destinationType : 'url',
+			allowEdit : true,
+			quality : 100,
+			targetWidth : 200,
+			targetHeight : 200,
+			saveToPhotoAlbum : false
+		},function(ret,err){
+			if(ret) {
+				show_doing();
+			    request("m=Order&a=post_cover",{values:{},files:{pic:ret.data}}, function(data,error){
+		   			hide_doing();
+			    	if(data.code==0){
+			    		$toast('图片上传成功！');
+			    		$('#face').attr('src',data.pic);
+			    		setTimeout(function(){ue_script("set","close_w()");},1000);
+			    		ue_script_f("root","user","user_info()");
+			    	} else {
+				    	$toast('图片上传失败！');
+			    	}
+		   		})
+			}
+		})
+	}
+	</script>
+</html>

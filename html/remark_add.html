@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	</head>
+	<body class="c-wh">
+		<div class="w10 c-3dc6b6" id="header">
+			<div class="box w95 area_auto pstnr h22e t-wh">
+				<span class="pstna absl0 abst01"  onclick="close_w();" tapmode=""><img src="../image/left.png" class="w15e h15e"></span>
+				<div class="ovd tx-c ftz12">订单备注</div>
+				<span class="pstna absr0 abst02 ftz09 t-wh" tapmode="" onclick="ue_script_f('remark_add','remark_add_c','submit()')">提交</span>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../script/init.js"></script>
+	<script type="text/javascript" src="../script/app.js"></script>
+	<script>
+	apiready = function(){
+		open_f('remark_add_c','remark_add_c.html',api.pageParam);
+	};
+	</script>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	</head> 
+	<body class="c-wh">
+		<div class="box 10 auto t-666">
+			<div class="ubb ub-e4e4e4 h100e pd10">
+				<textarea id="cont" placeholder="留下您的宝贵意见" name="content" class="w10 area_auto h60e ubnone ftz10"></textarea>
+			</div>			
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../script/init.js"></script>
+	<script type="text/javascript" src="../script/app.js"></script>
+	<script type="text/javascript" src="../script/net.js"></script>
+	<script>
+	var remark;
+	apiready = function(){
+		api.parseTapmode();
+		if(is_define(api.pageParam.remark)) {
+			remark=api.pageParam.remark;
+			$('#cont').val(remark);
+		}
+	};
+
+	function submit(){
+		var content=$('#cont').val();
+		if(!is_define(content)){
+			$toast("请输入内容");
+			return false;
+		}
+		
+		request("m=Masseur&a=post_note",{values:{id:api.pageParam.id,note:content}}, function(data, error){
+			if(data.code==0){
+				if(is_define(remark)) {
+					$toast("备注修改成功！");
+				} else {
+					$toast("备注添加成功！");
+				}
+				ue_script_f("order_deal","order_deal_c","get_deal()");
+				setTimeout(function(){
+					close_w();
+				},1000);
+			}else{
+				$toast('出现异常，请稍候再试！');
+			}
+		});
+	}
+	</script>
+</html>

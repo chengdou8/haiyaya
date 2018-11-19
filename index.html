@@ -1,113 +1,244 @@
 <!doctype html>
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
-    <title>底部导航</title>
-    <link rel="stylesheet" type="text/css" href="./css/api.css"/>
-    <link rel="stylesheet" type="text/css" href="./css/style.css"/>
-    <style>
-        header{ background-color: #f2f2f2; }
-        header ul li { height: 50px; line-height: 50px; text-align: center; display: none; color: #323237; position: relative;font-size: 18px;  }
-        header ul li.active{ display: block; }
-        #footer{  background-color: #f2f2f2; }
-        #footer ul li{  padding-top: 36px; padding-bottom: 4px; background: url() no-repeat center 2px; background-size: auto 30px; text-align: center; }
-        #footer ul li.active{ color: #6ab494; }
-        #footer ul li:nth-child(1){ background-image: url(./image/bottombtn0101.png); }
-        #footer ul li:nth-child(2){ background-image: url(./image/bottombtn0201.png); }
-        #footer ul li:nth-child(3){ background-image: url(./image/bottombtn0301.png); }
-        #footer ul li:nth-child(4){ background-image: url(./image/bottombtn0401.png); }
-        #footer ul li:nth-child(1).active{ background-image: url(./image/bottombtn0102.png); }
-        #footer ul li:nth-child(2).active{ background-image: url(./image/bottombtn0202.png); }
-        #footer ul li:nth-child(3).active{ background-image: url(./image/bottombtn0302.png); }
-        #footer ul li:nth-child(4).active{ background-image: url(./image/bottombtn0402.png); }
-        .flex-con{
-        	overflow: auto
-        }
-    </style>
+    <title>嗨丫丫-健康师</title>
+   <link rel="stylesheet" type="text/css" href="./css/aui.css"/>
+   <link rel="stylesheet" type="text/css" href="./css/common.css" />
 </head>
-<body>
-<div id="wrap" class="flex-wrap flex-vertical">
-    <header>
-        <ul>
-            <li class="border-b active" >云API</li>
-            <li class="border-b" >端API</li>
-            <li class="border-b" >开发</li>
-            <li class="border-b" >文档</li>
-        </ul>
-    </header>
-    <div id="main" class="flex-con">
-
+<body class="c-wh">
+    <div id="wrap">
+        <div class="w10 c-3dc6b6" id="header">
+			<div class="box w95 area_auto pstnr h22e t-wh" id="head">
+				<div class="ovd tx-c ftz12">嗨丫丫-健康师</div>
+			</div>
+		</div>
+		<div id="tab">
+			<div class="aui-tab dspn">
+		        <div class="aui-tab-item aui-active" onclick="order_nav_change(0)">当前订单<span id="cur_num"></span></div>
+		        <div class="aui-tab-item" onclick="order_nav_change(1)">历史订单<span id="history_num"></span></div>
+		    </div>
+		</div>
+        <div id="main"></div>
+        <div id="footer" class="ubt ub-e4e4e4 c-f7f7f7 t-939393">
+			<ul class="clo_three h265e pdt02">
+				<li class="col_list t-3dc6b6" ontouchend="randomSwitchBtn(0)">
+					<div class="w9 area_auto">
+						<div class="h15e tx-c">
+							<img class="h15e w15e inblock" src="image/icon/footer_1_act.png">
+						</div>
+						<div class="tx-c umh15 ftz07">接单</p>
+					</div>
+				</li>
+				<li class="col_list" ontouchend="randomSwitchBtn(1)">
+					<div class="w9 area_auto">
+						<div class="h15e tx-c pstnr" style="top:-0.1em">
+							<img class="h18e w18e inblock" src="image/icon/footer_2.png">
+						</div>
+						<div class="tx-c umh15 ftz07">订单</div>
+					</div>
+				</li>							
+				<li class="col_list" ontouchend="randomSwitchBtn(2)">
+					<div class="w9 area_auto">
+						<div class="h15e tx-c">
+							<img class="h15e w15e inblock" src="image/icon/footer_3.png">
+						</div>
+						<div class="tx-c umh15 ftz07">我的</div>
+					</div>
+				</li>			
+			</ul>
+		</div>
     </div>
-    <div id="footer" class="border-t">
-        <ul class="flex-wrap" >
-            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con active" >云API</li>
-            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" >端API</li>
-            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" >开发</li>
-            <li tapmode="hover" onclick="randomSwitchBtn( this );" class="flex-con" >文档</li>
-        </ul>
-    </div>
-</div>
 </body>
-</html>
 <script type="text/javascript" src="script/api.js"></script>
+<script type="text/javascript" src="script/init.js"></script>
+<script type="text/javascript" src="script/app.js"></script>
+<script type="text/javascript" src="script/zepto.min.js"></script>
+<script type="text/javascript" src="script/self.js"></script>
+<script type="text/javascript" src="script/device.js"></script>
+<script type="text/javascript" src="script/net.js"></script>
+<script type="text/javascript" src="script/sdk_jpush.js"></script>
 <script type="text/javascript">
-    apiready = function () {
-        $api.fixStatusBar( $api.dom('header') );
-        api.setStatusBarStyle({
-            style: 'dark',
-            color: '#6ab494'
-        });
-        funIniGroup();
-    }
+	var first_start;
+	var header_h;
+	var footer_h;
+	var rect_h;
+	var tab_h;
+	var index_tag;
+	var two_tag;
+	var cur_num;
+	var his_num;
+    apiready = function(){
+		//设置当前版本号
+//		var Last_AppVersion = get_local("Last_AppVersion");
+//		if (!is_define(Last_AppVersion)){
+//			set_local("Last_AppVersion", app_version);
+//		} else{
+//			if (Last_AppVersion!=app_version){
+//				set_local("Last_AppVersion", app_version);
+//			} else{
+//				start_home();
+//			}
+//		}
+		start_home();
+		sdk_j_init();
+    };
+    
+    function start_home(){
+		start_group();
+	}
+    function start_group(){
+		//启动窗口组
+		var $header = $api.byId('header');
+		$api.fixStatusBar($header);
+		var body_h=api.winHeight;
+		header_h = $api.byId('header').offsetHeight;
+		footer_h = $api.byId('footer').offsetHeight;
+		rect_h = body_h - header_h - footer_h;
+		api.openFrameGroup({
+			name : 'index',
+			bounces : true,
+			scrollEnabled:false,
+			rect : {
+				x : 0,
+				y : header_h,
+				w : 'auto',
+				h : rect_h
+			},
+			index : 0,
+			preload:1,
+			frames : [{
+				name : 'home',
+				url : 'main/home.html',
+				bounces : true,
+				pageParam:{
+					foot_h:footer_h,
+					head_h:header_h
+				}
+			}, {
+				name : 'order',
+				url : 'main/order.html',
+				pageParam:{header_h:header_h+44,foot_h:footer_h},
+				bounces : true
+			},{
+				name : 'user',
+				url : 'main/user.html',
+				bounces : true
+			}]
+		},function(ret, err){
+			var name = ret.name;
+			var index = ret.index;
+		});
+	}
+	function change_value(index){
+		two_tag = index;
+	}
+	function randomSwitchBtn(index){ 
+		if(index_tag==index){
+			return false;
+		}
 
-    function funIniGroup(){
-        var eHeaderLis = $api.domAll('header li'),
-            frames = [];
-        for (var i = 0,len = eHeaderLis.length; i < len; i++) {
-                frames.push( { 
-                    name: 'frame'+i, 
-                    url: './html/frame'+i+'.html', 
-                    bgColor : 'rgba(0,0,0,.2)',
-                    bounces:true
-                } )
-        }
-        api.openFrameGroup({
-            name: 'group',
-            scrollEnabled: false,
-            rect: {
-                x: 0, 
-                y: $api.dom('header').offsetHeight, 
-                w: api.winWidth, 
-                h: $api.dom('#main').offsetHeight
-            },
-            index: 0,
-            frames: frames
-        }, function (ret, err) {
+		var $header = $api.byId('header');
+		$api.fixStatusBar($header);
+		var $footer = $('#footer');
+		header_h = $api.byId('header').offsetHeight;
+		var $tab = $('#tab');
+		$api.fixStatusBar($tab);
+		var body_h=api.winHeight;
+		footer_h = $api.byId('footer').offsetHeight;
+		rect_h = body_h - header_h - footer_h;
+		if(index==1){
+			var token = get_local('openid');
+			if(!is_define(token)){
+				open_w('login','widget://user/login.html');
+				return false;
+			}
+		}
 
-        });
-    }
+		if(index==0) {
+			$("#tab .aui-tab").addClass("dspn");
+			$("#header").removeClass('c-wh');
+			api.setFrameGroupAttr({
+		    name: 'index',
+		    rect:{
+				    x:0,
+				    y:header_h,
+				    w:'auto',
+				    h: rect_h
+				}
+			});
+		} else if(index==1) {
+			$("#tab .aui-tab").removeClass("dspn");
+			$("#tab").css("top",header_h);
+			$("#header").removeClass('c-wh');
+			api.setFrameGroupAttr({
+		    name: 'index',
+		    rect:{
+				    x:0,
+				    y: header_h+$api.byId('tab').offsetHeight,
+				    w:'auto',
+				    h: rect_h-$api.byId('tab').offsetHeight
+				}
+			});	
+		} else if(index==2) {
+			$("#header").addClass('c-wh');
+			$("#tab .aui-tab").addClass("dspn");
+			api.setFrameGroupAttr({
+		    name: 'index',
+		    rect:{
+				    x:0,
+				    y:0,
+				    w:'auto',
+				    h:body_h-footer_h
+				}
+			});
+		}
 
-    // 随意切换按钮
-    function randomSwitchBtn( tag ) {
-        if( tag == $api.dom('#footer li.active') )return;
-        var eFootLis = $api.domAll('#footer li'),
-            eHeaderLis = $api.domAll('header li'),
-            index = 0;
-        for (var i = 0,len = eFootLis.length; i < len; i++) {
-            if( tag == eFootLis[i] ){
-                index = i;
-            }else{
-                $api.removeCls(eFootLis[i], 'active');
-                $api.removeCls(eHeaderLis[i], 'active');
-            }
-        }
-        $api.addCls( eFootLis[index], 'active');
-        $api.addCls( eHeaderLis[index], 'active');
-        api.setFrameGroupIndex({
-            name: 'group',
-            index: index
-        });
-    }
+		$("#footer li").removeClass("t-3dc6b6");
+		$("#footer img").eq(0).attr("src","image/icon/footer_1.png");
+		$("#footer img").eq(1).attr("src","image/icon/footer_2.png");
+		$("#footer img").eq(2).attr("src","image/icon/footer_3.png");
+		$("#header").eq(2).removeClass("c-3dc6b6");
+		$("#footer li").eq(index).addClass("t-3dc6b6");
+		$("#footer img").eq(index).attr("src","image/icon/footer_"+(index+1)+"_act.png");
+		api.setFrameGroupIndex({
+			name : 'index',
+			index : index,
+		})
+		index_tag = index;
+	}
+	
+	function order_nav_change(index){
+		var $header = $api.byId('header');
+		$api.fixStatusBar($header);
+		var $footer = $api.byId('footer');
+		var body_h=api.winHeight;
+		header_h = $api.byId('header').offsetHeight;
+		footer_h = $api.byId('footer').offsetHeight;
+		rect_h = body_h - header_h - footer_h;
+		
+		api.setFrameGroupAttr({
+	    name: 'index',
+	    rect:{
+			    x:0,
+			    y:header_h+$api.byId('tab').offsetHeight,
+			    w:'auto',
+			    h:rect_h-$api.byId('tab').offsetHeight
+			}
+		});
+		
+		$(".aui-tab-item").removeClass("aui-active");
+		$(".aui-tab-item").eq(index).addClass("aui-active")
+		ue_script_f("root","order","change_index("+index+")");
+	}
+	
+	function give_curnum(cur_num){
+		$("#cur_num").html('('+cur_num+')');
+	}
+	function give_hisnum(his_num) {
+		$("#history_num").html('('+his_num+')');
+	}
 </script>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+	    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	    <title>RAF</title>
+	    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+	    <link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+	</head>
+	<body class="c-wh">
+		<div class="w10 c-3dc6b6" id="header">
+			<div class="box w95 area_auto pstnr h22e t-wh">
+				<div class="ovd tx-c ftz12">我的请假</div>
+				<span class="pstna absl0 abst01"  onclick="close_w();" tapmode=""><img src="../image/left.png" class="w15e h15e"></span>
+			</div>
+		</div>
+		
+		<div id="footer" class="ubt ub-e4e4e4 c-f7f7f7 t-939393">
+			<ul class="clo_five h265e pdt02">
+				<li class="col_list" ontouchend="open_w('leave_record','../user/leave_record.html')">
+					<div class="w9 area_auto">
+						<div class="h15e tx-c">
+							<img class="h15e w15e inblock" src="../image/icon/leave_cord.png">
+						</div>
+						<div class="tx-c umh15 ftz07">请假记录</p>
+					</div>
+				</li>
+				<li class="col_list_four" onclick="ue_script_f('leave','leave_c','submit()')">提交</li>			
+			</ul>
+		</div>
+	</body>
+	<script type="text/javascript" src="../script/api.js"></script>
+	<script type="text/javascript" src="../script/zepto.min.js"></script>
+	<script type="text/javascript" src="../script/init.js"></script>
+	<script type="text/javascript" src="../script/app.js"></script>
+	<script>
+	apiready = function(){
+		var footH = $api.byId('footer').offsetHeight;
+		$('.col_list_four').css({'height':footH,'line-height':footH+'px'});
+		var windH = api.winHeight;
+		open_f_f("leave_c","leave_c.html",api.pageParam);
+	}
+	</script>
+</html>

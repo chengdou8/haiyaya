@@ -1,0 +1,298 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>RAF</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+<div class="aui-content">
+	<div id="audio" class="audio dspn">
+		<div class="audio_play dspn" ontouchend="play_resume()"><img src="../image/icon/pause.png" class="w18e" /></div>
+		<div class="audio_pause dspn" ontouchend="play_pause()"><img src="../image/icon/play.png" class="w18e" /></div>
+	</div>
+	<div class="pd05"><img src="../image/hyy.jpg" class="w10" /></div>
+	<div id="home_deal" class="pdl05 pdr05"></div>
+	<script id="home_deal_temp" type="text/html">
+	<div class="order_home">
+		<div class="order_box" onclick="is_login(function(){open_w('order_deal','../user/order_deal.html',{order_id:<%=order_info.id%>})})">
+			<div class="pstnr pdl10 marb075">
+			  <span class="rot cyan"></span>
+			  <div class="pdb03 ftz095 t-333 line10"><span id="status" class="sr t-3dc6b6 ftz095"></span>开单信息</div>
+		      <p>订单来源：<%=order_info.from%></p>
+		      <p>开单时间：<%=order_info.createtime_data%></p>
+		      <p>选择房间：<%=order_info.room_name%></p>
+		    </div>
+		    
+		    <%if(member_info=='') {%>
+		    <div class="pstnr pdl10 marb075">
+		      <span class="rot ondine"></span>
+			  <div class="h13e ftz095 t-333 line10">客人信息</div>
+		      <p>客人姓名：散客</p>
+		      <p>客人电话：暂无</p>
+		    </div>
+		    <%}else{%>
+		    <div class="pstnr pdl10 marb075">
+		      <span class="rot ondine"></span>
+			  <div class="h13e ftz095 t-333 line10">客人信息</div>
+		      <p>客人姓名：<%=member_info.member_name%></p>
+		      <p>客人电话：<%=member_info.member_tel%></p>
+		    </div>
+		    <%}%>
+		    <div class="pstnr pdl10 marb05">
+		      <span class="rot orange"></span>
+			  <div class="pdb03 ftz095 t-333 line10 abst05">服务信息</div>
+		    </div>
+		</div>
+		
+		<%for(var i=0;i<result_project.length;i++){%>
+	        <%for(var j=0;j<result_project[i].project_list.length;j++){%>
+	        <div class="prjects mart05">
+	          <div class="">
+	            <div class="ftz095"><%=result_project[i].project_list[j].title%></div>
+	            <p class="pdt01">¥<%=result_project[i].project_list[j].unit_price%>/<%=result_project[i].project_list[j].duration%>分钟</p>
+	          </div>
+	          <%if(order_info.status==-1){%>
+	            <div class="artificerCon"><p>已取消</p></div>
+	          <%}else{%>
+	          <div class="artificerCon">
+	            <%if(result_project[i].project_list[j].up_time<=0){%>
+	              <p>待上钟</p>
+	            <%}else if(result_project[i].project_list[j].up_time>0&&result_project[i].project_list[j].down_time==0){%>
+	              <p>上钟</p>
+	            <%}else if(result_project[i].project_list[j].down_time>0){%>
+	              <p>已下钟</p>
+	            <%}%>
+	          </div>
+	          <%}%>
+	          <%if(order_info.status==1){%>
+		          <%if(result_project[i].project_list[j].up_time==0) {%>
+		          	<div class="operation" onclick="showUpload('uplock','<%=result_project[i].project_list[j].id%>')">操作</div>
+		          <%}else if(result_project[i].project_list[j].up_time>0&&result_project[i].project_list[j].down_time==0){%>
+					<div class="operation" onclick="showUpload('downlock','<%=result_project[i].project_list[j].id%>')">操作</div>
+		          <%}%>
+		      <%}%>
+	          <div class="price pdl08">¥<%=result_project[i].project_list[j].total_price%></div>
+	        </div>
+	        <%}%>
+	    <%}%>
+	  </div>
+	
+	  <div class="pdt075 pdb075">
+		<%if((order_info.status==1||order_info.status==2)&&order_info.is_confirm==0&&up_count>0){%>
+		<div class="aui-btn aui-btn-block aui-btn-warning" onclick="confirmOrder(<%=order_info.id%>)">接单</div>
+		<%}else if((order_info.status==1||order_info.status==2)&&up_count>0){%>
+		<div class="aui-btn aui-btn-block aui-btn-primary" onclick="alluplock(<%=order_info.id%>)">我要上钟</div>
+		<%}else if((order_info.status==1||order_info.status==2)&&down_count>0){%>
+		<div class="aui-btn aui-btn-block aui-btn-danger" onclick="alldownlock(<%=order_info.id%>)">我要下钟</div>
+		<%}else if((order_info.status==1||order_info.status==2)&&is_evaluation==0&&down_count==0){%>
+		<div class="aui-btn aui-btn-block aui-btn-primary" onclick="open_f_mask('widget://html/qrCode.html',{order_id:<%=order_info.id%>,masseur_id:<%=result_project[0].masseur_id%>})">评价</div>
+		<%}%>
+	 </div>
+	</script>
+</div>
+</body>
+<script type="text/javascript" src="../script/api.js"></script>
+<script type="text/javascript" src="../script/zepto.min.js"></script>
+<script type="text/javascript" src="../script/init.js"></script>
+<script type="text/javascript" src="../script/self.js"></script>
+<script type="text/javascript" src="../script/app.js"></script>
+<script type="text/javascript" src="../script/net.js"></script>
+<script type="text/javascript" src="../script/template.js"></script>
+<script type="text/javascript" src="../script/echo.min.js"></script>
+<script type="text/javascript">
+	var audioStreamer;
+	apiready = function() {
+	  audioStreamer = api.require('audioStreamer');
+      get_home_deal();
+      push_down_motive(function(){
+		get_home_deal();
+	  });
+	  
+	  if(!$('#audio').hasClass('dspn')) {
+	  	$('#audio').addClass('dspn');
+	  }
+    };
+    
+    function get_home_deal() {
+    	show_doing();
+	    request("m=Masseur&a=index_order",{values:{}}, function(datas,error){
+   			hide_doing();
+   			if(datas.code==0){
+	    		$('#home_deal').html(bt('home_deal_temp',datas));
+	    		if((datas.order_info.status==1||datas.order_info.status==2)&&datas.order_info.is_confirm==0&&datas.is_one_uptime==0) {
+	    			$('#status').html('待接单');
+	    		} else if((datas.order_info.status==1||datas.order_info.status==2)&&datas.up_count>0) {
+	    			$('#status').html('待上钟');
+	    		} else if((datas.order_info.status==1||datas.order_info.status==2)&&datas.down_count>0) {
+	    			$('#status').html('待下钟');
+	    		} else if((datas.order_info.status==1||datas.order_info.status==2)&&datas.up_count==0&&datas.down_count==0) {
+	    			if(datas.is_evaluation>0) {
+	    				$('#status').html('已评价');
+	    			}else{
+	    				$('#status').html('已完成');
+	    			}
+	    		} 
+	    		push_down_over();
+	    	} else {
+	    		$('#home_deal').html(no_data).addClass('c-wh marl05 marr05 pd10');
+	    		push_down_over();
+	    	}
+   		})
+    }
+    
+    function showUpload(type,id) {
+		if(type=='uplock') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['上钟','删除项目']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 1) {
+					uplock(id);
+				} else if(ret.buttonIndex == 2) {
+					del_project(id)
+				}
+			});
+		} else if(type=='downlock') {
+			api.actionSheet({
+				cancelTitle : '取消',
+				buttons : ['下钟']
+			}, function(ret, err) {
+				if (ret.buttonIndex == 1) {
+					downlock(id);
+				}
+			});
+		}
+	}
+	
+	function del_project(id) {
+    	show_doing();
+	    request("m=Masseur&a=del_project",{values:{id:id}}, function(datas,error){
+   			hide_doing();
+	    	if(datas.code==0){
+	    		$toast('项目删除成功！');
+	    		get_home_deal();
+	    		ue_script_f("root","order","get_orderList('first')");
+	    	} else {
+	    		$toast('只有一个项目，不能删除！');
+	    	}    	
+   		})
+	}
+	
+	function uplock(id) {
+    	show_doing();
+	    request("m=Masseur&a=up_clock",{values:{id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('上钟成功！');
+	    		play_msg();
+	    		get_home_deal();
+	    		ue_script_f("root","order","get_orderList('first')");
+		    } else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function downlock(id) {
+    	show_doing();
+	    request("m=Masseur&a=down_clock",{values:{id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('下钟成功！');
+	    		play_end();
+	    		get_home_deal();
+	    		ue_script_f("root","order","get_orderList('first')");
+	    	} else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function alluplock(id) {
+    	show_doing();
+	    request("m=Masseur&a=all_up",{values:{order_id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('上钟成功！');
+	    		get_home_deal();
+	    		play_msg();
+	    		ue_script_f("root","order","get_orderList('first')");
+		    } else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function alldownlock(id) {
+    	show_doing();
+	    request("m=Masseur&a=all_down",{values:{order_id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		$toast('下钟成功！');
+	    		get_home_deal();
+	    		play_end();
+	    		ue_script_f("root","order","get_orderList('first')");
+	    	} else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function confirmOrder(id) {
+    	show_doing();
+	    request("m=Masseur&a=confirm_order",{values:{id:id}}, function(data,error){
+   			hide_doing();
+	    	if(data.code==0){
+	    		get_home_deal();
+	    		play_success();
+	    		ue_script_f("root","order","get_orderList('first')");
+	    		ue_script_f("root","user","user_info()");
+	    	} else {
+	    		$toast(data.msg);
+	    	}
+   		})
+    }
+    
+    function play_success() {
+    	audioStreamer.openPlayer({
+		    path: 'widget://res/success.mp3',
+		})
+    }
+    
+    function play_msg() {
+    	$('#audio').removeClass('dspn');
+    	$('#audio .audio_play').addClass('dspn');
+    	$('#audio .audio_pause').removeClass('dspn');
+    	audioStreamer.openPlayer({
+			path: 'widget://res/msg.mp3'
+		})
+    }
+    
+    function play_pause() {
+    	$('#audio .audio_play').removeClass('dspn');
+    	$('#audio .audio_pause').addClass('dspn');
+    	audioStreamer.pause();
+    }
+    
+    function play_resume() {
+    	if(api.systemType=='ios') {
+    		$('#audio .audio_play').addClass('dspn');
+    		$('#audio .audio_pause').removeClass('dspn');
+    		audioStreamer.resume();
+    	} else {
+    		play_msg();
+    	}
+    }
+    
+    function play_end() {
+    	audioStreamer.openPlayer({
+			path: 'widget://res/end.mp3'
+		})
+    }
+</script>
+</html>
